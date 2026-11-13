@@ -37,7 +37,9 @@ jobs:
       - name: Vérifier les composants Android SDK
         run: |
           echo "SDK_ROOT=$ANDROID_HOME"
-          sdkmanager "platforms;android-34" "build-tools;34.0.0"
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -path "*/bin/sdkmanager" -type f | head -n 1)
+          test -n "$SDKMANAGER" || { echo "sdkmanager introuvable"; exit 1; }
+          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0"
       - name: Compiler l'APK de test
         run: ./gradlew --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4
