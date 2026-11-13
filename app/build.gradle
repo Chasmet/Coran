@@ -9,7 +9,7 @@ android {
         applicationId 'com.chk.coran'
         minSdk 21
         targetSdk 34
-        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+        versionCode = (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
         versionName "1.0.${System.getenv('GITHUB_RUN_NUMBER') ?: '1'}"
     }
 
