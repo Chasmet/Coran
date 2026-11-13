@@ -1,0 +1,74 @@
+name: Android • build et mise à jour
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Préparer le Gradle wrapper officiel s'il manque
+        run: |
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            gradle wrapper --gradle-version 8.9
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add gradlew gradlew.bat gradle/wrapper/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.properties
+            if ! git diff --cached --quiet; then
+              git commit -m "chore: ajouter le wrapper Gradle officiel [skip ci]"
+              git push origin HEAD:main
+            fi
+          fi
+          chmod +x gradlew
+      - name: Compiler l'APK de test
+        run: ./gradlew --no-daemon assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coran-debug-${{ github.run_number }}
+          path: app/build/outputs/apk/debug/*.apk
+      - name: Préparer la signature privée
+        if: ${{ env.SIGN_READY == 'true' }}
+        run: echo "Configuration prête"
+        env:
+          SIGN_READY: ${{ secrets.CORAN_KEYSTORE_BASE64 != '' && secrets.CORAN_KEYSTORE_PASSWORD != '' && secrets.CORAN_KEY_ALIAS != '' && secrets.CORAN_KEY_PASSWORD != '' }}
+      - name: Construire une release signée
+        id: signed
+        env:
+          KEYSTORE_BASE64: ${{ secrets.CORAN_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.CORAN_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.CORAN_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.CORAN_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo "Signature non configurée : aucun APK de mise à jour publié."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/coran-release.jks"
+          export KEYSTORE_PATH="$RUNNER_TEMP/coran-release.jks"
+          ./gradlew --no-daemon assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk coran-release.apk
+          HASH=$(sha256sum coran-release.apk | awk '{print $1}')
+          echo "SHA256: $HASH" > release-notes.txt
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+      - name: Publier GitHub Release — dernière version
+        if: ${{ steps.signed.outputs.ready == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v1.0.${{ github.run_number }}" ./coran-release.apk             --title "Coran 1.0.${{ github.run_number }}"             --notes-file release-notes.txt --latest

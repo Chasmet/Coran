@@ -1,0 +1,45 @@
+plugins {
+    id 'com.android.application'
+}
+android {
+    namespace 'com.chk.coran'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.chk.coran'
+        minSdk 21
+        targetSdk 34
+        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+        versionName "1.0.${System.getenv('GITHUB_RUN_NUMBER') ?: '1'}"
+    }
+
+    buildFeatures { buildConfig true }
+
+    signingConfigs {
+        release {
+            if (System.getenv('KEYSTORE_PATH')) {
+                storeFile file(System.getenv('KEYSTORE_PATH'))
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            buildConfigField 'boolean', 'ENABLE_GITHUB_UPDATE', 'true'
+        }
+        debug {
+            buildConfigField 'boolean', 'ENABLE_GITHUB_UPDATE', 'false'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+dependencies {
+    implementation 'androidx.core:core:1.13.1'
+}

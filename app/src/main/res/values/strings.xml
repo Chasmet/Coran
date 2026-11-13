@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Coran</string>
+    <string name="surah_search">Rechercher une sourate</string>
+    <string name="settings">Réglages</string>
+    <string name="continue_reading">Reprendre la lecture</string>
+    <string name="update">Vérifier les mises à jour</string>
+</resources>

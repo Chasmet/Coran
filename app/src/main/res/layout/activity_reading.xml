@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@color/background">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center_vertical" android:padding="12dp" android:orientation="horizontal">
+        <Button android:id="@+id/backButton" android:text="‹"
+            android:contentDescription="Retour" android:layout_width="55dp" android:layout_height="wrap_content"/>
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:orientation="vertical"
+            android:paddingLeft="12dp">
+            <TextView android:id="@+id/surahHeading" android:text="Sourate" android:textSize="19sp"
+                android:textStyle="bold" android:textColor="@color/text"
+                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            <TextView android:id="@+id/surahSubtitle" android:text=""
+                android:textColor="@color/muted" android:textSize="12sp"
+                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <Button android:id="@+id/optionsButton" android:text="⚙"
+            android:contentDescription="Réglages" android:layout_width="55dp" android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:paddingLeft="10dp" android:paddingRight="10dp"
+        android:gravity="center_vertical">
+        <TextView android:id="@+id/progressLabel" android:text="Chargement…"
+            android:textColor="@color/muted" android:padding="8dp"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"/>
+        <Button android:id="@+id/downloadAudioButton" android:text="⬇ Audio"
+            android:contentDescription="Télécharger l'audio hors connexion"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <ScrollView android:id="@+id/readingScroll" android:layout_width="match_parent"
+        android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+        <LinearLayout android:id="@+id/versesContainer" android:orientation="vertical"
+            android:padding="12dp" android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:padding="8dp" android:orientation="horizontal" android:gravity="center">
+        <Button android:id="@+id/previousButton" android:text="◀"
+            android:contentDescription="Verset précédent" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="wrap_content"/>
+        <Button android:id="@+id/playButton" android:text="▶ Écouter"
+            android:layout_width="0dp" android:layout_weight="2" android:layout_height="wrap_content"/>
+        <Button android:id="@+id/nextButton" android:text="▶▶"
+            android:contentDescription="Verset suivant" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="wrap_content"/>
+    </LinearLayout>
+</LinearLayout>
