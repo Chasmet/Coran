@@ -18,7 +18,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
@@ -35,17 +34,16 @@ jobs:
             fi
           fi
           chmod +x gradlew
+      - name: Vérifier les composants Android SDK
+        run: |
+          echo "SDK_ROOT=$ANDROID_HOME"
+          sdkmanager "platforms;android-34" "build-tools;34.0.0"
       - name: Compiler l'APK de test
         run: ./gradlew --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: coran-debug-${{ github.run_number }}
           path: app/build/outputs/apk/debug/*.apk
-      - name: Préparer la signature privée
-        if: ${{ env.SIGN_READY == 'true' }}
-        run: echo "Configuration prête"
-        env:
-          SIGN_READY: ${{ secrets.CORAN_KEYSTORE_BASE64 != '' && secrets.CORAN_KEYSTORE_PASSWORD != '' && secrets.CORAN_KEY_ALIAS != '' && secrets.CORAN_KEY_PASSWORD != '' }}
       - name: Construire une release signée
         id: signed
         env:
