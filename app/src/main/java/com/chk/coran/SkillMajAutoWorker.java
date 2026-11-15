@@ -67,10 +67,13 @@ public final class SkillMajAutoWorker extends Worker {
     @Override public Result doWork() {
         Context app = getApplicationContext();
         SkillMajAuto updater = new SkillMajAuto(app);
-        if (!updater.enabled() || BuildConfig.DEBUG) return Result.success();
+        if (!updater.enabled() || !BuildConfig.ENABLE_GITHUB_UPDATE || BuildConfig.DEBUG)
+            return Result.success();
         try {
             SkillMajAuto.Release release = updater.latest();
-            if (release == null) return Result.success();
+            if (release == null || (Build.VERSION.SDK_INT >= 33 &&
+                app.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED)) return Result.success();
             SharedPreferences prefs = app.getSharedPreferences("coran_update_notice", Context.MODE_PRIVATE);
             if (!release.version.equals(prefs.getString("last_notified", ""))) {
                 notifyRelease(app, release.version, false);

@@ -19,18 +19,11 @@ Application mobile pour lire le Saint Coran en **arabe**, **français** et **ang
 
 JDK 17, Android SDK 34, Gradle 8.9 : `./gradlew assembleDebug`.
 
-GitHub Actions compile automatiquement à chaque push sur `main`. La première exécution génère et versionne le JAR officiel du wrapper Gradle s'il n'existe pas encore.
+GitHub Actions compile automatiquement à chaque push sur `main` avec le wrapper versionné.
 
-## Première publication signée (obligatoire pour SkillMajAuto)
+## Publication officielle
 
-Configurer **une seule fois** les quatre secrets GitHub Actions du dépôt :
-
-- `CORAN_KEYSTORE_BASE64` : contenu du même keystore JKS encodé en base64 sur une seule ligne.
-- `CORAN_KEYSTORE_PASSWORD`
-- `CORAN_KEY_ALIAS`
-- `CORAN_KEY_PASSWORD`
-
-Garder le keystore original hors du dépôt et le sauvegarder de façon sécurisée : toutes les mises à jour doivent utiliser ce même certificat. À partir de là chaque build produit une vraie GitHub Release avec `coran-release.apk` et `SHA256`. Sans les secrets, un APK de débogage est produit comme Artifact mais **aucune Release installable de mise à jour n'est publiée**.
+Le workflow `.github/workflows/android.yml` obtient la signature permanente de Coran auprès du service Render existant, via l’identité GitHub Actions OIDC. Il vérifie le certificat, l’identifiant `com.chk.coran` et le numéro de version, puis publie `coran-release.apk` dans GitHub Releases avec son empreinte SHA-256. L’application consulte les Releases publiques sans compte ni token.
 
 L'application vérifie le propriétaire du dépôt et l'empreinte SHA256 annoncée par la Release, puis Android contrôle la signature et demande l'accord d'installation. Le package `com.chk.coran` reste inchangé pour conserver les données.
 
@@ -59,8 +52,7 @@ SkillMajAuto est une méthode intégrée au code de Coran, et non une applicatio
 * Téléchargement avec DownloadManager, contrôle SHA256, nom du package `com.chk.coran`, versionCode supérieur et certificat Android identique avant installation.
 * Demande d'autorisation Android avant l'installation, sans désinstaller ni effacer les favoris ou les sourates.
 * L'APK de test est maintenant isolé avec `com.chk.coran.dev` : il ne remplace pas un APK officiel et ne peut pas être converti en Release par simple renommage.
-* Le workflow GitHub Actions construit un APK debug, et produit une Release stable `coran-release.apk` uniquement si les **quatre secrets de signature permanents** sont présents.
-* Le keystore doit rester sauvegardé hors du dépôt, réutilisé à l'identique pour toutes les versions de Coran.
+* GitHub Actions conserve un APK de test dans Artifacts et publie le canal officiel avec la même signature permanente.
 
 Note : les anciens APK debug diffusés sous `com.chk.coran` ne peuvent pas être remplacés par une Release avec une signature différente. Une installation initiale officielle avec la clé persistante est nécessaire.
 
@@ -76,4 +68,4 @@ Le nouveau deuxième onglet **🎧 Écouter** est accessible depuis la liste des
 - L'écoute en cours est affichée en bas du nouvel écran. La fermeture de l'écran ne coupe pas la lecture. L'arrêt explicite sur **■** libère le service.
 - Sur Android 13+, l'autorisation de notification est demandée pour les commandes visibles. Sur Android 14, les types de service `mediaPlayback` et `dataSync` sont déclarés dans le manifeste.
 
-Les APK de test `com.chk.coran.dev` restent séparés de l'application stable et ne doivent pas être présentés comme des APK à signature pérenne. La publication de la Release de mise à jour nécessite toujours les 4 secrets de signature GitHub `CORAN_KEYSTORE_*` existants.
+Les APK de test `com.chk.coran.dev` restent séparés de l'application stable et ne doivent pas être présentés comme des APK à signature pérenne.

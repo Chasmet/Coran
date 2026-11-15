@@ -48,7 +48,8 @@ public final class SettingsActivity extends Activity {
         });
 
         CheckBox auto = findViewById(R.id.autoUpdate);
-        auto.setChecked(prefs.getBoolean("autoUpdate", true));
+        auto.setEnabled(BuildConfig.ENABLE_GITHUB_UPDATE);
+        auto.setChecked(BuildConfig.ENABLE_GITHUB_UPDATE && prefs.getBoolean("autoUpdate", true));
         auto.setOnCheckedChangeListener((v, checked) -> {
             new SkillMajAuto(this).setEnabled(checked);
             if (checked && android.os.Build.VERSION.SDK_INT >= 33 &&
@@ -66,10 +67,14 @@ public final class SettingsActivity extends Activity {
         versionText.setText(BuildConfig.VERSION_NAME);
         updateStatus = findViewById(R.id.updateStatus);
         updateStatus.setText(BuildConfig.ENABLE_GITHUB_UPDATE
-            ? "SkillMajAuto · GitHub Releases · contrôle périodique des mises à jour"
-            : "SkillMajAuto intégré · APK de test isolé. Les mises à jour en place exigent une Release signée.");
+            ? "Vérification au démarrage et en arrière-plan quand l’option est activée."
+            : "Les mises à jour sont disponibles dans l’application officielle.");
+        findViewById(R.id.checkUpdate).setEnabled(BuildConfig.ENABLE_GITHUB_UPDATE);
         findViewById(R.id.checkUpdate).setOnClickListener(v ->
             UpdateManager.check(this, true, message -> updateStatus.setText(message)));
+        if ("com.chk.coran.UPDATE_AVAILABLE".equals(getIntent().getAction())) {
+            UpdateManager.check(this, true, message -> updateStatus.setText(message));
+        }
         updateLanguageTabs();
     }
 

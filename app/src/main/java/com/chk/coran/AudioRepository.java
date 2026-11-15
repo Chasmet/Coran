@@ -4,7 +4,6 @@ import android.content.Context;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -18,8 +17,10 @@ import java.nio.charset.StandardCharsets;
  */
 public final class AudioRepository {
     private AudioRepository() {}
-    private static final java.util.concurrent.ConcurrentHashMap<String, Object> FILE_LOCKS =
-        new java.util.concurrent.ConcurrentHashMap<>();
+    private static final Object[] FILE_LOCKS = new Object[32];
+    static {
+        for (int i = 0; i < FILE_LOCKS.length; i++) FILE_LOCKS[i] = new Object();
+    }
 
     public static File audioFile(Context context, String language, int global) {
         File folder = new File(context.getFilesDir(), "audio/" + Languages.normalize(language));
@@ -31,7 +32,8 @@ public final class AudioRepository {
         throws Exception {
         String language = Languages.normalize(lang);
         File destination = audioFile(context, language, global);
-        Object lock = FILE_LOCKS.computeIfAbsent(destination.getAbsolutePath(), k -> new Object());
+        int lockIndex = (destination.getAbsolutePath().hashCode() & Integer.MAX_VALUE) % FILE_LOCKS.length;
+        Object lock = FILE_LOCKS[lockIndex];
         synchronized (lock) {
         if (destination.isFile() && destination.length() >= 512) return destination;
         // Compatibilité avec les fichiers arabes téléchargés par la première version.

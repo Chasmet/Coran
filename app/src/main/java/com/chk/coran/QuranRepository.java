@@ -30,7 +30,7 @@ public final class QuranRepository {
     public static Surah load(Context context, int number) throws Exception {
         if (number < 1 || number > 114) throw new IllegalArgumentException("Numéro de sourate invalide");
         File dir = new File(context.getFilesDir(), "surahs");
-        if (!dir.exists() && !dir.mkdirs()) throw new IllegalStateException("Stockage inaccessible");
+        if (!dir.isDirectory() && !dir.mkdirs() && !dir.isDirectory()) throw new IllegalStateException("Stockage inaccessible");
         File cache = new File(dir, number + ".json");
         if (cache.isFile()) {
             try {
@@ -41,13 +41,14 @@ public final class QuranRepository {
             + "/editions/quran-uthmani,fr.hamidullah,en.sahih";
         String json = downloadText(url);
         Surah surah = parse(number, json);
-        File tmp = new File(dir, number + ".tmp");
-        try (FileOutputStream output = new FileOutputStream(tmp)) {
-            output.write(json.getBytes(StandardCharsets.UTF_8));
-        }
-        if (!tmp.renameTo(cache)) { // remplacement de cache si nécessaire
-            if (cache.exists()) cache.delete();
-            if (!tmp.renameTo(cache)) tmp.delete();
+        File tmp = File.createTempFile(number + "-", ".tmp", dir);
+        try {
+            try (FileOutputStream output = new FileOutputStream(tmp)) {
+                output.write(json.getBytes(StandardCharsets.UTF_8));
+            }
+            tmp.renameTo(cache);
+        } finally {
+            if (tmp.exists()) tmp.delete();
         }
         return surah;
     }

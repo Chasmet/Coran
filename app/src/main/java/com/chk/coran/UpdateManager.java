@@ -17,25 +17,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.widget.Toast;
 import androidx.core.content.FileProvider;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class UpdateManager {
     private UpdateManager() {}
     public interface Status { void show(String text); }
-    private static final String ENDPOINT = "https://api.github.com/repos/Chasmet/Coran/releases/latest";
-    private static final Pattern TAG = Pattern.compile("^v1\\.0\\.(\\d+)$");
-    private static final Pattern HASH = Pattern.compile("SHA256:\\s*([0-9a-fA-F]{64})");
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
 
     public static void check(Activity activity, boolean manual, Status status) {
@@ -46,39 +37,19 @@ public final class UpdateManager {
         send(status, "Recherche de mise à jour…");
         new Thread(() -> {
             try {
-                JSONObject release = new JSONObject(QuranRepository.downloadText(ENDPOINT));
-                Matcher matcher = TAG.matcher(release.getString("tag_name"));
-                if (!matcher.matches()) throw new IllegalStateException("Tag de version inattendu");
-                int newer = Integer.parseInt(matcher.group(1));
-                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(activity);
-                pref.edit().putLong("lastUpdateCheck", System.currentTimeMillis()).apply();
-                if (newer <= BuildConfig.VERSION_CODE) {
+                SkillMajAuto.Release release = new SkillMajAuto(activity).latest();
+                if (release == null) {
                     send(status, "Votre version " + BuildConfig.VERSION_NAME + " est à jour.");
                     return;
                 }
-                JSONArray assets = release.getJSONArray("assets");
-                String link = null;
-                for (int i = 0; i < assets.length(); i++) {
-                    JSONObject asset = assets.getJSONObject(i);
-                    if ("coran-release.apk".equals(asset.optString("name"))) {
-                        link = asset.getString("browser_download_url");
-                        break;
-                    }
-                }
-                if (link == null || !trusted(link)) throw new SecurityException("APK officiel introuvable");
-                Matcher hashMatch = HASH.matcher(release.optString("body"));
-                if (!hashMatch.find()) throw new SecurityException("Empreinte SHA256 manquante");
-                final String apkUrl = link;
-                final String sha = hashMatch.group(1).toLowerCase(Locale.ROOT);
                 MAIN.post(() -> {
                     if (activity.isFinishing() || activity.isDestroyed()) return;
-                    send(status, "Version 1.0." + newer + " disponible");
+                    send(status, "Version " + release.version + " disponible");
                     new AlertDialog.Builder(activity).setTitle("Mise à jour du Coran")
-                        .setMessage("Une nouvelle version 1.0." + newer
-                            + " est disponible. Vos favoris et vos sourates seront conservés.")
+                        .setMessage("La version " + release.version + " est disponible.")
                         .setNegativeButton("Plus tard", null)
-                        .setPositiveButton("Télécharger", (d, w) ->
-                            download(activity, newer, apkUrl, sha, status)).show();
+                        .setPositiveButton("Télécharger et installer", (d, w) ->
+                            download(activity, release.code, release.url, release.sha256, status)).show();
                 });
             } catch (Exception error) {
                 if (manual) {
@@ -90,23 +61,24 @@ public final class UpdateManager {
         }, "coran-update-check").start();
     }
 
-    private static boolean trusted(String link) {
-        try {
-            URL url = new URL(link);
-            return "https".equals(url.getProtocol()) && "github.com".equals(url.getHost())
-                && url.getUserInfo() == null
-                && url.getPath().startsWith("/Chasmet/Coran/releases/download/")
-                && url.getPath().endsWith("/coran-release.apk");
-        } catch (Exception ignored) { return false; }
-    }
-
     private static void download(Activity activity, int version, String link, String sha, Status status) {
         try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+            long pending = prefs.getLong("updateDownloadId", -1);
+            if (pending >= 0) {
+                poll(activity, status, pending);
+                return;
+            }
             String filename = "coran-v1.0." + version + ".apk";
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
             request.setTitle("Coran · version 1.0." + version);
             request.setDescription("Mise à jour officielle depuis GitHub Releases");
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            File directory = activity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+            if (directory == null) throw new IllegalStateException("Stockage indisponible");
+            File previous = new File(directory, filename);
+            if (previous.exists() && !previous.delete())
+                throw new IllegalStateException("Impossible de remplacer l’ancien téléchargement");
             request.setDestinationInExternalFilesDir(activity, Environment.DIRECTORY_DOWNLOADS, filename);
             DownloadManager dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
             if (dm == null) throw new IllegalStateException("Service téléchargement indisponible");
@@ -144,6 +116,12 @@ public final class UpdateManager {
                 clear(activity);
                 send(status, "Échec du téléchargement. Réessayez depuis les réglages.");
             } else {
+                long received = cursor.getLong(cursor.getColumnIndexOrThrow(
+                    DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                long total = cursor.getLong(cursor.getColumnIndexOrThrow(
+                    DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                String progress = total > 0 ? " · " + Math.min(100, received * 100 / total) + " %" : "";
+                send(status, "Téléchargement de la mise à jour" + progress);
                 MAIN.postDelayed(() -> poll(activity, status, id), 2500);
             }
         } catch (Exception ex) { send(status, "Erreur de téléchargement : " + ex.getMessage()); }
@@ -181,9 +159,9 @@ public final class UpdateManager {
                         Intent install = new Intent(Intent.ACTION_VIEW);
                         install.setDataAndType(content, "application/vnd.android.package-archive");
                         install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        clear(activity);
-                        send(status, "L'installation nécessite votre confirmation Android.");
                         activity.startActivity(install);
+                        clear(activity);
+                        send(status, "Confirmez l’installation dans Android.");
                     } catch (Exception ex) { send(status, "Installation impossible : " + ex.getMessage()); }
                 });
             } catch (Exception ex) {

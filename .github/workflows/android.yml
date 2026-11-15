@@ -5,94 +5,74 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: coran-android-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   android:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: false
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
-      - name: Préparer le Gradle wrapper officiel s'il manque
+      - name: Préparer le SDK Android
         run: |
-          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-            gradle wrapper --gradle-version 8.9
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add gradlew gradlew.bat gradle/wrapper/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.properties
-            if ! git diff --cached --quiet; then
-              git commit -m "chore: ajouter le wrapper Gradle officiel [skip ci]"
-              git push origin HEAD:main
-            fi
-          fi
-          chmod +x gradlew
-      - name: Vérifier les composants Android SDK
+          manager=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f -print -quit)
+          test -n "$manager"
+          "$manager" "platforms;android-34" "build-tools;34.0.0"
+      - name: Vérifier les textes, les trois sources audio et la lecture en arrière-plan
         run: |
-          echo "SDK_ROOT=$ANDROID_HOME"
-          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -path "*/bin/sdkmanager" -type f | head -n 1)
-          test -n "$SDKMANAGER" || { echo "sdkmanager introuvable"; exit 1; }
-          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0"
-      - name: Vérifier les éditions Quran et les audios FR EN AR
-        run: python3 scripts/verify_sources.py
-      - name: Vérifier le lecteur complet Android
-        run: python3 scripts/check_background_audio.py
-      - name: Compiler l'APK de test
+          python3 scripts/verify_sources.py
+          python3 scripts/check_background_audio.py
+      - name: Compiler l’APK de test
         run: ./gradlew --no-daemon assembleDebug
-      - name: Vérifier la séparation du canal debug
-        run: |
-          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep "name='com.chk.coran.dev'"
       - uses: actions/upload-artifact@v4
         with:
           name: coran-debug-${{ github.run_number }}
-          path: app/build/outputs/apk/debug/*.apk
-      - name: Construire une release signée
-        id: signed
-        env:
-          KEYSTORE_BASE64: ${{ secrets.CORAN_KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.CORAN_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.CORAN_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.CORAN_KEY_PASSWORD }}
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+      - name: Compiler l’APK officiel avec la signature permanente
+        if: github.ref == 'refs/heads/main'
+        run: python3 scripts/assemble_signed_release.py
+      - name: Vérifier l’APK officiel
+        if: github.ref == 'refs/heads/main'
         run: |
-          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
-            echo "::error::Signature permanente absente : configurez les quatre secrets CORAN_KEYSTORE_*. Refus de déclarer une compilation de production réussie sans Release signée."
-            exit 1
-          fi
-          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/coran-release.jks"
-          export KEYSTORE_PATH="$RUNNER_TEMP/coran-release.jks"
-          ./gradlew --no-daemon assembleRelease
-          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          CERT=$("$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs app/build/outputs/apk/release/app-release.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1)
-          test "$CERT" = "8a0d3c5bbb0a62b04b2a098c7b73dc1976358c87820ab3ebe2b5a4cf3ab35776" || { echo "::error::Certificat différent de la clé permanente Coran. Publication refusée."; exit 1; }
-          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging app/build/outputs/apk/release/app-release.apk | grep "name='com.chk.coran'"
-          cp app/build/outputs/apk/release/app-release.apk coran-release.apk
-          HASH=$(sha256sum coran-release.apk | awk '{print $1}')
-          echo "SHA256: $HASH" > release-notes.txt
-          echo "Version: 1.0.${{ github.run_number }}" >> release-notes.txt
-          echo "Signature vérifiée, même certificat permanent. Mise à jour intégrée depuis l'application." >> release-notes.txt
-          echo "ready=true" >> "$GITHUB_OUTPUT"
-      - name: Publier GitHub Release — dernière version
-        if: ${{ steps.signed.outputs.ready == 'true' }}
+          sdk_tools="$ANDROID_HOME/build-tools/34.0.0"
+          apk=app/build/outputs/apk/release/app-release.apk
+          "$sdk_tools/apksigner" verify --verbose "$apk"
+          cert=$("$sdk_tools/apksigner" verify --print-certs "$apk" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')
+          test "$cert" = 'aa75ecad34a8e9601ba6b73f841426d9f7b4d388d6137b828b8a4fbbdd6f9766'
+          "$sdk_tools/aapt" dump badging "$apk" > apk-info.txt
+          grep -F "package: name='com.chk.coran' versionCode='$GITHUB_RUN_NUMBER' versionName='1.0.$GITHUB_RUN_NUMBER'" apk-info.txt
+          cp "$apk" coran-release.apk
+          hash=$(sha256sum coran-release.apk | cut -d ' ' -f 1)
+          printf 'Coran %s\n\nMise à jour automatique depuis les réglages.\n\nSHA256: %s\n' "1.0.$GITHUB_RUN_NUMBER" "$hash" > release-notes.txt
+      - name: Publier l’APK officiel dans GitHub Releases
+        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v1.0.${{ github.run_number }}" ./coran-release.apk \
-            --title "Coran 1.0.${{ github.run_number }}" \
-            --notes-file release-notes.txt --latest
-      - name: Archiver l'APK officiel signé
-        if: ${{ steps.signed.outputs.ready == 'true' }}
-        uses: actions/upload-artifact@v4
+          tag="v1.0.$GITHUB_RUN_NUMBER"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "La release $tag existe déjà."
+          else
+            gh release create "$tag" coran-release.apk --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" --title "Coran 1.0.$GITHUB_RUN_NUMBER" --notes-file release-notes.txt --latest
+          fi
+      - uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main'
         with:
-          name: coran-officiel-signe-${{ github.run_number }}
+          name: coran-officiel-${{ github.run_number }}
           path: coran-release.apk
           if-no-files-found: error
-      - name: Effacer la copie temporaire du keystore
-        if: always()
-        run: rm -f "$RUNNER_TEMP/coran-release.jks"
