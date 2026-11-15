@@ -79,11 +79,11 @@ public final class SettingsActivity extends Activity {
         privacyLink.setVisibility(BuildConfig.ENABLE_GITHUB_UPDATE ? android.view.View.GONE : android.view.View.VISIBLE);
         privacyLink.setOnClickListener(v -> new android.app.AlertDialog.Builder(this)
             .setTitle("Confidentialité — Mon Coran")
-            .setMessage("Éditeur : Sync 30 Numérique. Contact : skypieachannel@gmail.com.\\n\\n"
-                + "Mon Coran – Lire & Écouter est gratuite, sans compte, sans publicité, sans abonnement et sans achat intégré.\\n\\n"
-                + "Vos favoris, préférences et votre position de lecture sont stockés sur l'appareil, ainsi que les textes et audios téléchargés. Ils ne sont pas envoyés à Sync 30 Numérique. Certaines préférences et sourates peuvent être sauvegardées par Android si la sauvegarde du téléphone est activée.\\n\\n"
-                + "Les sourates et récitations non enregistrées sont téléchargées par HTTPS depuis Al Quran Cloud / Islamic Network. Ces services reçoivent des données techniques de connexion, notamment l'adresse IP, et appliquent leurs propres règles de confidentialité.\\n\\n"
-                + "Android peut demander une autorisation de notification pour les téléchargements et l'audio. Les données locales peuvent être supprimées depuis les paramètres Android ; des sauvegardes système peuvent subsister.\\n\\n"
+            .setMessage("Éditeur : Sync 30 Numérique. Contact : skypieachannel@gmail.com.\n\n"
+                + "Mon Coran – Lire & Écouter est gratuite, sans compte, sans publicité, sans abonnement et sans achat intégré.\n\n"
+                + "Vos favoris, préférences et votre position de lecture sont stockés sur l'appareil, ainsi que les textes et audios téléchargés. Ils ne sont pas envoyés à Sync 30 Numérique. Certaines préférences et sourates peuvent être sauvegardées par Android si la sauvegarde du téléphone est activée.\n\n"
+                + "Les sourates et récitations non enregistrées sont téléchargées par HTTPS depuis Al Quran Cloud / Islamic Network. Ces services reçoivent des données techniques de connexion, notamment l'adresse IP, et appliquent leurs propres règles de confidentialité.\n\n"
+                + "Android peut demander une autorisation de notification pour les téléchargements et l'audio. Les données locales peuvent être supprimées depuis les paramètres Android ; des sauvegardes système peuvent subsister.\n\n"
                 + "Pour vos questions et droits relatifs aux éventuelles données personnelles détenues par l'éditeur, contactez l'adresse indiquée. Mise à jour : 15 novembre 2026.")
             .setPositiveButton("Fermer", null).show());
         updateLanguageTabs();
