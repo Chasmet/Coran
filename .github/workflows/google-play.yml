@@ -1,0 +1,81 @@
+name: Coran • préparation Google Play
+
+on:
+  push:
+    branches:
+      - main
+      - feature/play-sync30-coran-20261115
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coran-google-play-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  google-play:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Préparer Android 16
+        run: |
+          manager=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f -print -quit)
+          test -n "$manager"
+          "$manager" "platforms;android-36" "build-tools;36.0.0"
+      - name: Tests de sources et audio
+        run: |
+          python3 scripts/verify_sources.py
+          python3 scripts/check_background_audio.py
+      - name: Contrôle du module Google Play
+        run: |
+          test -f playApp/src/main/AndroidManifest.xml
+          ! grep -q 'REQUEST_INSTALL_PACKAGES' playApp/src/main/AndroidManifest.xml
+          ! grep -q 'SkillMajAutoReceiver' playApp/src/main/AndroidManifest.xml
+          grep -q "applicationId 'com.sync30.coran'" playApp/build.gradle
+          grep -q 'targetSdk 36' playApp/build.gradle
+          grep -q "'ENABLE_GITHUB_UPDATE', 'false'" playApp/build.gradle
+      - name: Compilation de contrôle sur branche de préparation
+        if: github.ref != 'refs/heads/main'
+        run: ./gradlew --no-daemon :app:assembleDebug :playApp:assembleDebug :playApp:bundleRelease
+      - name: Archive QA (pas pour Google Play)
+        if: github.ref != 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coran-play-test-${{ github.run_number }}
+          path: playApp/build/outputs/apk/debug/playApp-debug.apk
+          if-no-files-found: error
+      - name: Construire AAB signé Google Play
+        if: github.ref == 'refs/heads/main'
+        run: python3 scripts/assemble_signed_play.py
+      - name: Vérifier le certificat et l'intégrité de l'AAB
+        if: github.ref == 'refs/heads/main'
+        run: |
+          aab=playApp/build/outputs/bundle/release/playApp-release.aab
+          test -s "$aab"
+          jarsigner -verify -verbose -certs "$aab" > play-aab-verification.txt
+          grep -q 'jar verified' play-aab-verification.txt
+          cert=$(keytool -printcert -jarfile "$aab" | sed -n 's/^[[:space:]]*SHA256: //p' | tr -d ':' | tr '[:upper:]' '[:lower:]')
+          test "$cert" = 'aa75ecad34a8e9601ba6b73f841426d9f7b4d388d6137b828b8a4fbbdd6f9766'
+          sha256sum "$aab" > coran-play-sha256.txt
+          cat coran-play-sha256.txt
+      - name: Publier l'AAB comme artefact privé de workflow
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coran-play-signe-${{ github.run_number }}
+          path: |
+            playApp/build/outputs/bundle/release/playApp-release.aab
+            coran-play-sha256.txt
+          if-no-files-found: error
