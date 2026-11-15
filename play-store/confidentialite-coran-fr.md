@@ -1,4 +1,4 @@
-# Politique de confidentialité — Coran – Lire et Écouter
+# Politique de confidentialité — Mon Coran – Lire & Écouter
 
 **Éditeur : Sync 30 Numérique**  
 **Date de préparation : 15 novembre 2026**  
