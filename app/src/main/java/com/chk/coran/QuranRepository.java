@@ -41,7 +41,7 @@ public final class QuranRepository {
             + "/editions/quran-uthmani,fr.hamidullah,en.sahih";
         String json = downloadText(url);
         Surah surah = parse(number, json);
-        File tmp = File.createTempFile(number + "-", ".tmp", dir);
+        File tmp = File.createTempFile("surah-" + number + "-", ".tmp", dir);
         try {
             try (FileOutputStream output = new FileOutputStream(tmp)) {
                 output.write(json.getBytes(StandardCharsets.UTF_8));
