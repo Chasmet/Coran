@@ -23,7 +23,7 @@ public class BookmarksActivity extends Activity {
         root.setPadding(20, 24, 20, 12);
         root.setBackgroundColor(getResources().getColor(R.color.background));
         TextView title = new TextView(this);
-        title.setText("★ Mes favoris");
+        String language = Languages.selected(this);\n        title.setText(Languages.text(language, "★ Mes favoris", "★ Bookmarks", "★ المفضلة"));
         title.setTextSize(24);
         title.setTextColor(getResources().getColor(R.color.primary));
         root.addView(title);
@@ -48,11 +48,11 @@ public class BookmarksActivity extends Activity {
                 try {
                     int surah = Integer.parseInt(split[0]);
                     int verse = Integer.parseInt(split[1]);
-                    names.add(SurahCatalog.name(surah) + " · Verset " + verse);
+                    names.add(SurahCatalog.name(surah) + " · " + Languages.text(language, "Verset ", "Verse ", "آية ") + verse);
                 } catch (NumberFormatException error) { names.add(key); }
             } else names.add(key);
         }
-        if (names.isEmpty()) names.add("Aucun favori. Touchez ☆ pendant la lecture.");
+        if (names.isEmpty()) names.add(Languages.text(language, "Aucun favori. Touchez ☆ pendant la lecture.", "No bookmarks. Tap ☆ while reading.", "لا توجد آيات محفوظة بعد."));
         list.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, names));
         list.setOnItemClickListener((parent, view, position, id) -> {
             if (refs.isEmpty()) return;
@@ -60,7 +60,7 @@ public class BookmarksActivity extends Activity {
                 String[] split = refs.get(position).split(":");
                 Intent intent = new Intent(this, ReadingActivity.class);
                 intent.putExtra("surah", Integer.parseInt(split[0]));
-                intent.putExtra("jump", Integer.parseInt(split[1]));
+                intent.putExtra("jump", Integer.parseInt(split[1]));\n                intent.putExtra("language", language);
                 startActivity(intent);
             } catch (Exception ignored) {}
         });

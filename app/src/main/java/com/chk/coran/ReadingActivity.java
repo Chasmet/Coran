@@ -69,11 +69,11 @@ public final class ReadingActivity extends Activity {
         bindTab(R.id.readEnglish, Languages.ENGLISH);
         bindTab(R.id.readArabic, Languages.ARABIC);
         findViewById(R.id.previousButton).setOnClickListener(v ->
-            playVerse(Math.max(1, currentVerse - 1), true));
+            playVerse(Math.max(1, currentVerse - 1), prefs.getBoolean("autoNext", true)));
         findViewById(R.id.nextButton).setOnClickListener(v ->
-            playVerse(Math.min(surah == null ? 1 : surah.verses.size(), currentVerse + 1), true));
+            playVerse(Math.min(surah == null ? 1 : surah.verses.size(), currentVerse + 1), prefs.getBoolean("autoNext", true)));
         play.setOnClickListener(v -> {
-            if (!togglePlayback()) playVerse(currentVerse, true);
+            if (!togglePlayback(prefs.getBoolean("autoNext", true))) playVerse(currentVerse, prefs.getBoolean("autoNext", true));
         });
         findViewById(R.id.downloadAudioButton).setOnClickListener(v -> confirmDownload());
         updateLanguageHeader();
@@ -175,7 +175,7 @@ public final class ReadingActivity extends Activity {
             });
             TextView audioButton = card.findViewById(R.id.ayahPlayButton);
             audioButton.setOnClickListener(v -> {
-                if (verse.number == activeVerse && togglePlayback()) return;
+                if (verse.number == activeVerse && togglePlayback(false)) return;
                 playVerse(verse.number, false);
             });
             card.findViewById(R.id.ayahBody).setOnClickListener(v -> goTo(verse.number, false));
@@ -220,14 +220,14 @@ public final class ReadingActivity extends Activity {
             scroll.post(() -> scroll.smoothScrollTo(0, card.getTop()));
         }
     }
-    private boolean togglePlayback() {
+    private boolean togglePlayback(boolean autoNext) {
         if (player == null || !prepared) return false;
         try {
             if (player.isPlaying()) {
                 player.pause();
             } else {
                 player.start();
-                continuous = true;
+                continuous = autoNext;
             }
             updateProgress();
             return true;

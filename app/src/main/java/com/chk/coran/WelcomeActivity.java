@@ -25,10 +25,10 @@ public final class WelcomeActivity extends Activity {
             startActivity(intent);
         });
     }
-    @Override protected void onResume() {
+    private void showSelection(int id, String code, String current) {\n        TextView item = findViewById(id);\n        boolean selected = current.equals(code);\n        item.setBackgroundResource(selected ? R.drawable.tab_selected : R.drawable.tab_normal);\n        item.setTextColor(getResources().getColor(selected ? android.R.color.white : R.color.primary_dark));\n    }\n\n    @Override protected void onResume() {
         super.onResume();
         String current = Languages.selected(this);
-        TextView hint = findViewById(R.id.welcomeHint);
+        showSelection(R.id.welcomeFrench, Languages.FRENCH, current);\n        showSelection(R.id.welcomeEnglish, Languages.ENGLISH, current);\n        showSelection(R.id.welcomeArabic, Languages.ARABIC, current);\n        TextView hint = findViewById(R.id.welcomeHint);
         hint.setText(Languages.text(current,
             "Choisissez votre langue pour lire et écouter les 114 sourates",
             "Choose your language to read and listen to all 114 surahs",

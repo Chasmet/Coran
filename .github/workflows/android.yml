@@ -40,7 +40,7 @@ jobs:
           SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -path "*/bin/sdkmanager" -type f | head -n 1)
           test -n "$SDKMANAGER" || { echo "sdkmanager introuvable"; exit 1; }
           "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0"
-      - name: Compiler l'APK de test
+      - name: Vérifier les éditions Quran et les audios FR EN AR\n        run: python3 scripts/verify_sources.py\n      - name: Compiler l'APK de test
         run: ./gradlew --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4
         with:
