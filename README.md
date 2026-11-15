@@ -6,7 +6,10 @@ Application mobile pour lire le Saint Coran en **arabe**, **français** et **ang
 
 - 114 sourates, recherche rapide
 - Texte arabe Uthmani et traductions Hamidullah (FR) / Saheeh International (EN)
-- Écran de démarrage à 3 onglets 🇫🇷 / 🇬🇧 / 🇸🇦 puis interface dédiée à chaque langue\n- Audio véritable par verset : Youssouf Leclerc (FR), Ibrahim Walk (EN), Mishary Alafasy (AR)\n- Écoute, pause, barre de progression, passage automatique facultatif au verset suivant\n- Téléchargement audio individuel par langue pour écoute hors connexion
+- Écran de démarrage à 3 onglets 🇫🇷 / 🇬🇧 / 🇸🇦 puis interface dédiée à chaque langue
+- Audio véritable par verset : Youssouf Leclerc (FR), Ibrahim Walk (EN), Mishary Alafasy (AR)
+- Écoute, pause, barre de progression, passage automatique facultatif au verset suivant
+- Téléchargement audio individuel par langue pour écoute hors connexion
 - Sourates consultées mises en cache local pour lecture hors connexion
 - Favoris et dernière position de lecture persistants
 - Mode sombre système, taille du texte, sélection des langues
@@ -39,4 +42,9 @@ Service : [Al Quran Cloud](https://alquran.cloud/api) et [CDN Islamic Network](h
 
 ## Confidentialité
 
-Pas de compte utilisateur. Pas de publicité ni d'analyse. Les favoris, les préférences et les sourates téléchargées restent localement sur l'appareil. Les demandes réseau nécessaires concernent Al Quran Cloud et GitHub Releases. Les éditions audio et leurs traductions peuvent être d'auteurs différents. Aucun fichier audio d'une langue n'est affiché comme provenant d'un autre récitant.\n\n## Navigation\n\nLancement : trois drapeaux / choix de langue. Le répertoire des sourates, les versets et les boutons de lecture fonctionnent dans l'onglet correspondant. Un onglet permet de changer de langue sans perdre les favoris. Paramètres : langues complémentaires, taille, enchaînement audio, mise à jour.\n
+Pas de compte utilisateur. Pas de publicité ni d'analyse. Les favoris, les préférences et les sourates téléchargées restent localement sur l'appareil. Les demandes réseau nécessaires concernent Al Quran Cloud et GitHub Releases. Les éditions audio et leurs traductions peuvent être d'auteurs différents. Aucun fichier audio d'une langue n'est affiché comme provenant d'un autre récitant.
+
+## Navigation
+
+Lancement : trois drapeaux / choix de langue. Le répertoire des sourates, les versets et les boutons de lecture fonctionnent dans l'onglet correspondant. Un onglet permet de changer de langue sans perdre les favoris. Paramètres : langues complémentaires, taille, enchaînement audio, mise à jour.
+

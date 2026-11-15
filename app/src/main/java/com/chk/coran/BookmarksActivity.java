@@ -23,7 +23,8 @@ public class BookmarksActivity extends Activity {
         root.setPadding(20, 24, 20, 12);
         root.setBackgroundColor(getResources().getColor(R.color.background));
         TextView title = new TextView(this);
-        String language = Languages.selected(this);\n        title.setText(Languages.text(language, "★ Mes favoris", "★ Bookmarks", "★ المفضلة"));
+        String language = Languages.selected(this);
+        title.setText(Languages.text(language, "★ Mes favoris", "★ Bookmarks", "★ المفضلة"));
         title.setTextSize(24);
         title.setTextColor(getResources().getColor(R.color.primary));
         root.addView(title);
@@ -60,7 +61,8 @@ public class BookmarksActivity extends Activity {
                 String[] split = refs.get(position).split(":");
                 Intent intent = new Intent(this, ReadingActivity.class);
                 intent.putExtra("surah", Integer.parseInt(split[0]));
-                intent.putExtra("jump", Integer.parseInt(split[1]));\n                intent.putExtra("language", language);
+                intent.putExtra("jump", Integer.parseInt(split[1]));
+                intent.putExtra("language", language);
                 startActivity(intent);
             } catch (Exception ignored) {}
         });
