@@ -85,6 +85,16 @@ public final class SettingsActivity extends Activity {
                 + "Les sourates et récitations non enregistrées sont téléchargées par HTTPS depuis Al Quran Cloud / Islamic Network. Ces services reçoivent des données techniques de connexion, notamment l'adresse IP, et appliquent leurs propres règles de confidentialité.\n\n"
                 + "Android peut demander une autorisation de notification pour les téléchargements et l'audio. Les données locales peuvent être supprimées depuis les paramètres Android ; des sauvegardes système peuvent subsister.\n\n"
                 + "Pour vos questions et droits relatifs aux éventuelles données personnelles détenues par l'éditeur, contactez l'adresse indiquée. Mise à jour : 15 novembre 2026.")
+            .setNeutralButton("Politique complète", (dialog, which) -> {
+                Intent privacyIntent = new Intent(Intent.ACTION_VIEW,
+                    android.net.Uri.parse("https://sync30.onrender.com/coran-confidentialite.html"));
+                try {
+                    startActivity(privacyIntent);
+                } catch (android.content.ActivityNotFoundException error) {
+                    android.widget.Toast.makeText(this, "Navigateur indisponible",
+                        android.widget.Toast.LENGTH_SHORT).show();
+                }
+            })
             .setPositiveButton("Fermer", null).show());
         updateLanguageTabs();
     }
