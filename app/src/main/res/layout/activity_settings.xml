@@ -3,40 +3,122 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:background="@color/background">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:padding="20dp">
-        <TextView android:text="Réglages" android:textSize="26sp" android:textStyle="bold"
-            android:textColor="@color/primary" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:paddingBottom="20dp"/>
-        <TextView android:text="Langues affichées" android:textSize="18sp"
-            android:textColor="@color/text" android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <CheckBox android:id="@+id/showArabic" android:text="Arabe — texte original"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/showFrench" android:text="Français — Muhammad Hamidullah"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/showEnglish" android:text="Anglais — Saheeh International"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <TextView android:text="Taille de lecture" android:textSize="18sp"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textColor="@color/text" android:paddingTop="24dp"/>
-        <SeekBar android:id="@+id/fontSize" android:max="14"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <TextView android:id="@+id/fontSizeLabel" android:text="Taille standard"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textColor="@color/muted" />
-        <TextView android:text="Mise à jour automatique · SkillMajAuto"
-            android:textSize="18sp" android:paddingTop="24dp" android:textColor="@color/text"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/autoUpdate" android:text="Rechercher une nouvelle version au démarrage"
-            android:layout_width="match_parent" android:layout_height="wrap_content" />
-        <Button android:id="@+id/checkUpdate" android:text="Vérifier les mises à jour"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <TextView android:id="@+id/updateStatus" android:padding="10dp"
-            android:textColor="@color/muted" android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView android:text="Sources : Al Quran Cloud (alquran.cloud), texte arabe Uthmani, traduction française Muhammad Hamidullah, traduction anglaise Saheeh International. Récitation : Mishary Rashid Alafasy. Traductions et enregistrements restent la propriété de leurs ayants droit. Connexion nécessaire au premier chargement d’une sourate et pour les nouveaux fichiers audio."
-            android:paddingTop="24dp" android:textSize="13sp"
-            android:textColor="@color/muted" android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:orientation="vertical" android:padding="16dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical">
+            <TextView android:id="@+id/backSettings" android:layout_width="49dp"
+                android:layout_height="48dp" android:gravity="center" android:text="‹"
+                android:background="@drawable/tab_normal" android:textSize="28sp"
+                android:textColor="@color/primary_dark" android:contentDescription="Retour"/>
+            <TextView android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="wrap_content" android:gravity="center"
+                android:text="Coran" android:textSize="30sp" android:textStyle="bold"
+                android:textColor="@color/primary_dark"/>
+            <TextView android:layout_width="49dp" android:layout_height="48dp"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" android:padding="18dp" android:gravity="center"
+            android:background="@drawable/hero_bg" android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center" android:text="⚙  Réglages"
+                android:textSize="27sp" android:textStyle="bold" android:textColor="#FFFFFF"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center" android:text="الإعدادات · Settings"
+                android:textSize="14sp" android:textColor="#FFE5B5"/>
+        </LinearLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="25dp" android:layout_marginBottom="10dp"
+            android:text="✦  Langue de l’application" android:textSize="20sp"
+            android:textStyle="bold" android:textColor="@color/primary_dark"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView android:id="@+id/settingsFrench" android:text="🇫🇷 Français"
+                android:gravity="center" android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="53dp" android:textSize="13sp" android:textStyle="bold"
+                android:background="@drawable/tab_normal" android:textColor="@color/primary_dark"/>
+            <TextView android:id="@+id/settingsEnglish" android:text="🇬🇧 English"
+                android:gravity="center" android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="53dp" android:layout_marginLeft="6dp"
+                android:textSize="13sp" android:textStyle="bold"
+                android:background="@drawable/tab_normal" android:textColor="@color/primary_dark"/>
+            <TextView android:id="@+id/settingsArabic" android:text="🇸🇦 العربية"
+                android:gravity="center" android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="53dp" android:layout_marginLeft="6dp"
+                android:textSize="15sp" android:textStyle="bold"
+                android:background="@drawable/tab_normal" android:textColor="@color/primary_dark"/>
+        </LinearLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" android:layout_marginBottom="9dp"
+            android:text="↻  Mise à jour intégrée · SkillMajAuto"
+            android:textSize="19sp" android:textStyle="bold" android:textColor="@color/primary_dark"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/card_bg" android:orientation="vertical" android:padding="13dp">
+            <CheckBox android:id="@+id/autoUpdate" android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vérifier les mises à jour au démarrage"
+                android:textColor="@color/text" android:checked="true"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:padding="9dp">
+                <TextView android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content" android:text="Version actuelle"
+                    android:textColor="@color/text" android:textSize="16sp"/>
+                <TextView android:id="@+id/versionValue" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="1.0"
+                    android:textStyle="bold" android:textSize="16sp" android:textColor="@color/primary_dark"/>
+            </LinearLayout>
+            <TextView android:id="@+id/checkUpdate" android:layout_width="match_parent"
+                android:layout_height="55dp" android:background="@drawable/tab_selected"
+                android:gravity="center" android:text="↻  Vérifier maintenant"
+                android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="18sp"/>
+            <TextView android:id="@+id/updateStatus" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:textColor="@color/muted"
+                android:padding="12dp" android:textSize="13sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="✓  Vos favoris et sourates téléchargées sont conservés lors des mises à jour signées."
+                android:textColor="@color/primary_dark" android:textSize="12sp" android:padding="8dp"/>
+        </LinearLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" android:layout_marginBottom="9dp"
+            android:text="✦  Affichage des textes" android:textSize="20sp"
+            android:textStyle="bold" android:textColor="@color/primary_dark"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:background="@drawable/card_bg" android:padding="12dp">
+            <CheckBox android:id="@+id/showArabic" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:textColor="@color/text"
+                android:text="Afficher l'arabe en complément" android:checked="true"/>
+            <CheckBox android:id="@+id/showFrench" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:textColor="@color/text"
+                android:text="Afficher aussi le français"/>
+            <CheckBox android:id="@+id/showEnglish" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:textColor="@color/text"
+                android:text="Afficher aussi l'anglais"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="La langue sélectionnée reste toujours visible."
+                android:textColor="@color/muted" android:padding="8dp" android:textSize="12sp"/>
+            <TextView android:id="@+id/fontSizeLabel" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="6dp"
+                android:text="Taille des textes : 100 %" android:textSize="16sp"
+                android:textColor="@color/primary_dark"/>
+            <SeekBar android:id="@+id/fontSize" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:max="14" android:progress="4"/>
+        </LinearLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" android:layout_marginBottom="9dp"
+            android:text="♫  Audio par verset" android:textSize="20sp"
+            android:textStyle="bold" android:textColor="@color/primary_dark"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:background="@drawable/card_bg"
+            android:padding="12dp">
+            <CheckBox android:id="@+id/autoNext" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:checked="true"
+                android:textColor="@color/text" android:text="Enchaîner les versets automatiquement"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:padding="8dp" android:textSize="13sp" android:textColor="@color/muted"
+                android:text="🇫🇷 Youssouf Leclerc · 🇬🇧 Ibrahim Walk · 🇸🇦 Mishary Alafasy"/>
+        </LinearLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="18dp" android:padding="8dp" android:textSize="12sp"
+            android:textColor="@color/muted"
+            android:text="Source : Al Quran Cloud. Texte Uthmani, traductions Hamidullah et Saheeh International. Les fichiers audio sont les enregistrements de leurs auteurs respectifs. Une connexion est nécessaire au premier chargement. Mode sombre : selon le réglage Android."/>
     </LinearLayout>
 </ScrollView>

@@ -4,20 +4,52 @@
     android:orientation="vertical" android:background="@color/background">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
         android:gravity="center_vertical" android:padding="12dp" android:orientation="horizontal">
-        <Button android:id="@+id/backButton" android:text="‹"
-            android:contentDescription="Retour" android:layout_width="55dp" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/backButton" android:text="‹" android:gravity="center"
+            android:background="@drawable/tab_normal" android:textSize="28sp"
+            android:textColor="@color/primary_dark" android:contentDescription="Retour"
+            android:layout_width="50dp" android:layout_height="48dp"/>
         <LinearLayout android:layout_width="0dp" android:layout_weight="1"
             android:layout_height="wrap_content" android:orientation="vertical"
             android:paddingLeft="12dp">
-            <TextView android:id="@+id/surahHeading" android:text="Sourate" android:textSize="19sp"
-                android:textStyle="bold" android:textColor="@color/text"
+            <TextView android:id="@+id/surahHeading" android:text="Sourate" android:textSize="20sp"
+                android:textStyle="bold" android:textColor="@color/primary_dark"
                 android:layout_width="match_parent" android:layout_height="wrap_content"/>
             <TextView android:id="@+id/surahSubtitle" android:text=""
                 android:textColor="@color/muted" android:textSize="12sp"
                 android:layout_width="match_parent" android:layout_height="wrap_content"/>
         </LinearLayout>
-        <Button android:id="@+id/optionsButton" android:text="⚙"
-            android:contentDescription="Réglages" android:layout_width="55dp" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/optionsButton" android:text="⚙" android:gravity="center"
+            android:background="@drawable/tab_normal" android:textSize="24sp"
+            android:textColor="@color/primary_dark" android:contentDescription="Réglages"
+            android:layout_width="50dp" android:layout_height="48dp"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:paddingLeft="12dp" android:paddingRight="12dp"
+        android:gravity="center_vertical">
+        <TextView android:id="@+id/readFrench" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="47dp" android:text="🇫🇷 FR"
+            android:background="@drawable/tab_normal" android:gravity="center"
+            android:textColor="@color/primary_dark" android:textStyle="bold"/>
+        <TextView android:id="@+id/readEnglish" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="47dp" android:text="🇬🇧 EN"
+            android:layout_marginLeft="5dp" android:background="@drawable/tab_normal"
+            android:gravity="center" android:textColor="@color/primary_dark" android:textStyle="bold"/>
+        <TextView android:id="@+id/readArabic" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="47dp" android:text="🇸🇦 عربي"
+            android:layout_marginLeft="5dp" android:background="@drawable/tab_normal"
+            android:gravity="center" android:textColor="@color/primary_dark" android:textStyle="bold"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:layout_margin="11dp"
+        android:background="@drawable/hero_bg" android:padding="10dp">
+        <TextView android:id="@+id/readingLanguage"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="🇫🇷 Français" android:textColor="#FFFFFF"
+            android:textSize="15sp" android:textStyle="bold" android:gravity="center"/>
+        <TextView android:id="@+id/audioCredit"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Audio par verset" android:textColor="#FFE5B5"
+            android:textSize="12sp" android:gravity="center"/>
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
         android:orientation="horizontal" android:paddingLeft="10dp" android:paddingRight="10dp"
@@ -25,9 +57,11 @@
         <TextView android:id="@+id/progressLabel" android:text="Chargement…"
             android:textColor="@color/muted" android:padding="8dp"
             android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"/>
-        <Button android:id="@+id/downloadAudioButton" android:text="⬇ Audio"
+        <TextView android:id="@+id/downloadAudioButton" android:text="⬇ Télécharger"
+            android:background="@drawable/tab_normal" android:gravity="center" android:padding="10dp"
+            android:textColor="@color/primary_dark" android:textSize="12sp"
             android:contentDescription="Télécharger l'audio hors connexion"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            android:layout_width="wrap_content" android:layout_height="48dp"/>
     </LinearLayout>
     <ScrollView android:id="@+id/readingScroll" android:layout_width="match_parent"
         android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
@@ -37,13 +71,18 @@
     </ScrollView>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
         android:padding="8dp" android:orientation="horizontal" android:gravity="center">
-        <Button android:id="@+id/previousButton" android:text="◀"
-            android:contentDescription="Verset précédent" android:layout_width="0dp"
-            android:layout_weight="1" android:layout_height="wrap_content"/>
-        <Button android:id="@+id/playButton" android:text="▶ Écouter"
-            android:layout_width="0dp" android:layout_weight="2" android:layout_height="wrap_content"/>
-        <Button android:id="@+id/nextButton" android:text="▶▶"
-            android:contentDescription="Verset suivant" android:layout_width="0dp"
-            android:layout_weight="1" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/previousButton" android:text="◀"
+            android:contentDescription="Verset précédent" android:gravity="center"
+            android:background="@drawable/tab_normal" android:textColor="@color/primary_dark"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="51dp"/>
+        <TextView android:id="@+id/playButton" android:text="▶ Écouter"
+            android:gravity="center" android:background="@drawable/tab_selected"
+            android:textColor="#FFFFFF" android:textStyle="bold" android:layout_marginLeft="6dp"
+            android:layout_width="0dp" android:layout_weight="2" android:layout_height="51dp"/>
+        <TextView android:id="@+id/nextButton" android:text="▶▶"
+            android:contentDescription="Verset suivant" android:gravity="center"
+            android:background="@drawable/tab_normal" android:textColor="@color/primary_dark"
+            android:layout_width="0dp" android:layout_marginLeft="6dp"
+            android:layout_weight="1" android:layout_height="51dp"/>
     </LinearLayout>
 </LinearLayout>
