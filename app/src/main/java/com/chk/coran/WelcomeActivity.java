@@ -43,6 +43,7 @@ public final class WelcomeActivity extends Activity {
             "Choisissez votre langue pour lire et écouter les 114 sourates",
             "Choose your language to read and listen to all 114 surahs",
             "اختر لغتك لقراءة واستماع سور القرآن الكريم"));
+        new SkillMajAuto(this).sync();
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
         if (BuildConfig.ENABLE_GITHUB_UPDATE && p.getBoolean("autoUpdate", true)
             && System.currentTimeMillis() - p.getLong("lastUpdateCheck", 0) > 24L * 60 * 60 * 1000) {

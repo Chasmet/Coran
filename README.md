@@ -48,3 +48,18 @@ Pas de compte utilisateur. Pas de publicité ni d'analyse. Les favoris, les pré
 
 Lancement : trois drapeaux / choix de langue. Le répertoire des sourates, les versets et les boutons de lecture fonctionnent dans l'onglet correspondant. Un onglet permet de changer de langue sans perdre les favoris. Paramètres : langues complémentaires, taille, enchaînement audio, mise à jour.
 
+
+## SkillMajAuto — procédure GitHub signée
+
+SkillMajAuto est une méthode intégrée au code de Coran, et non une application à installer.
+
+* À l'ouverture, vérification GitHub Releases et planification WorkManager.
+* Toutes les 12 heures environ (sans garantie Android), nouveau contrôle réseau et notification de disponibilité.
+* Les réglages permettent de désactiver la surveillance et de déclencher une recherche immédiate.
+* Téléchargement avec DownloadManager, contrôle SHA256, nom du package `com.chk.coran`, versionCode supérieur et certificat Android identique avant installation.
+* Demande d'autorisation Android avant l'installation, sans désinstaller ni effacer les favoris ou les sourates.
+* L'APK de test est maintenant isolé avec `com.chk.coran.dev` : il ne remplace pas un APK officiel et ne peut pas être converti en Release par simple renommage.
+* Le workflow GitHub Actions construit un APK debug, et produit une Release stable `coran-release.apk` uniquement si les **quatre secrets de signature permanents** sont présents.
+* Le keystore doit rester sauvegardé hors du dépôt, réutilisé à l'identique pour toutes les versions de Coran.
+
+Note : les anciens APK debug diffusés sous `com.chk.coran` ne peuvent pas être remplacés par une Release avec une signature différente. Une installation initiale officielle avec la clé persistante est nécessaire.

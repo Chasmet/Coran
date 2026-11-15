@@ -44,6 +44,9 @@ jobs:
         run: python3 scripts/verify_sources.py
       - name: Compiler l'APK de test
         run: ./gradlew --no-daemon assembleDebug
+      - name: Vérifier la séparation du canal debug
+        run: |
+          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep "name='com.chk.coran.dev'"
       - uses: actions/upload-artifact@v4
         with:
           name: coran-debug-${{ github.run_number }}
@@ -64,6 +67,8 @@ jobs:
           printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/coran-release.jks"
           export KEYSTORE_PATH="$RUNNER_TEMP/coran-release.jks"
           ./gradlew --no-daemon assembleRelease
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
+          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging app/build/outputs/apk/release/app-release.apk | grep "name='com.chk.coran'"
           cp app/build/outputs/apk/release/app-release.apk coran-release.apk
           HASH=$(sha256sum coran-release.apk | awk '{print $1}')
           echo "SHA256: $HASH" > release-notes.txt
@@ -73,4 +78,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v1.0.${{ github.run_number }}" ./coran-release.apk             --title "Coran 1.0.${{ github.run_number }}"             --notes-file release-notes.txt --latest
+          gh release create "v1.0.${{ github.run_number }}" ./coran-release.apk \
+            --title "Coran 1.0.${{ github.run_number }}" \
+            --notes-file release-notes.txt --latest
+      - name: Effacer la copie temporaire du keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/coran-release.jks"

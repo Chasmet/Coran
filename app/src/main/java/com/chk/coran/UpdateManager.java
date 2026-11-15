@@ -40,7 +40,7 @@ public final class UpdateManager {
 
     public static void check(Activity activity, boolean manual, Status status) {
         if (!BuildConfig.ENABLE_GITHUB_UPDATE) {
-            send(status, "Les mises à jour intégrées sont réservées à l'APK de Release signé.");
+            send(status, "SkillMajAuto intégré : mises à jour en place réservées aux Releases signées.");
             return;
         }
         send(status, "Recherche de mise à jour…");
@@ -81,7 +81,11 @@ public final class UpdateManager {
                             download(activity, newer, apkUrl, sha, status)).show();
                 });
             } catch (Exception error) {
-                if (manual) send(status, "Vérification impossible : " + error.getMessage());
+                if (manual) {
+                    if (error.getMessage() != null && error.getMessage().contains("HTTP 404"))
+                        send(status, "Aucune Release signée publiée pour le moment.");
+                    else send(status, "Vérification impossible : " + error.getMessage());
+                }
             }
         }, "coran-update-check").start();
     }
@@ -211,7 +215,7 @@ public final class UpdateManager {
         return info.signatures;
     }
 
-    private static void checkSignature(Activity activity, File apk, int expectedVersion) throws Exception {
+    private static void checkSignature(Context activity, File apk, int expectedVersion) throws Exception {
         PackageManager pm = activity.getPackageManager();
         int flags = Build.VERSION.SDK_INT >= 28 ? PackageManager.GET_SIGNING_CERTIFICATES
             : PackageManager.GET_SIGNATURES;
@@ -231,6 +235,33 @@ public final class UpdateManager {
                 if (Arrays.equals(signature.toByteArray(), proposed.toByteArray())) match = true;
             }
             if (!match) throw new SecurityException("Signature APK non conforme");
+        }
+    }
+
+    /** Vérifie le téléchargement avant notification de la mise à jour. */
+    public static boolean verifiedForNotification(Context context, long id) {
+        if (!BuildConfig.ENABLE_GITHUB_UPDATE || BuildConfig.DEBUG || id < 0) return false;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (id != prefs.getLong("updateDownloadId", -1)) return false;
+        String name = prefs.getString("updateName", "");
+        String hash = prefs.getString("updateSha", "");
+        int version = prefs.getInt("updateVersion", 0);
+        if (!name.matches("coran-v1\\.0\\.\\d+\\.apk") || !hash.matches("[a-f0-9]{64}")) return false;
+        DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        if (dm == null) return false;
+        try (Cursor cursor = dm.query(new DownloadManager.Query().setFilterById(id))) {
+            if (cursor == null || !cursor.moveToFirst() ||
+                cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+                    != DownloadManager.STATUS_SUCCESSFUL) return false;
+            File directory = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+            if (directory == null) return false;
+            File apk = new File(directory, name).getCanonicalFile();
+            if (!directory.getCanonicalFile().equals(apk.getParentFile()) ||
+                !apk.isFile() || apk.length() < 10000 || !hash.equals(sha256(apk))) return false;
+            checkSignature(context, apk, version);
+            return true;
+        } catch (Exception ignored) {
+            return false;
         }
     }
 

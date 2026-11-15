@@ -49,8 +49,14 @@ public final class SettingsActivity extends Activity {
 
         CheckBox auto = findViewById(R.id.autoUpdate);
         auto.setChecked(prefs.getBoolean("autoUpdate", true));
-        auto.setOnCheckedChangeListener((v, checked) ->
-            prefs.edit().putBoolean("autoUpdate", checked).apply());
+        auto.setOnCheckedChangeListener((v, checked) -> {
+            new SkillMajAuto(this).setEnabled(checked);
+            if (checked && android.os.Build.VERSION.SDK_INT >= 33 &&
+                checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 413);
+            }
+        });
         CheckBox autoNext = findViewById(R.id.autoNext);
         autoNext.setChecked(prefs.getBoolean("autoNext", true));
         autoNext.setOnCheckedChangeListener((v, checked) ->
@@ -60,8 +66,8 @@ public final class SettingsActivity extends Activity {
         versionText.setText(BuildConfig.VERSION_NAME);
         updateStatus = findViewById(R.id.updateStatus);
         updateStatus.setText(BuildConfig.ENABLE_GITHUB_UPDATE
-            ? "GitHub Releases · installation Android avec vérification de signature"
-            : "APK de test : mise à jour intégrée disponible après signature de la Release.");
+            ? "SkillMajAuto · GitHub Releases · contrôle périodique des mises à jour"
+            : "SkillMajAuto intégré · APK de test isolé. Les mises à jour en place exigent une Release signée.");
         findViewById(R.id.checkUpdate).setOnClickListener(v ->
             UpdateManager.check(this, true, message -> updateStatus.setText(message)));
         updateLanguageTabs();

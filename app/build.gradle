@@ -14,7 +14,6 @@ android {
     }
 
     buildFeatures { buildConfig true }
-
     signingConfigs {
         release {
             if (System.getenv('KEYSTORE_PATH')) {
@@ -28,10 +27,12 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.release
+            if (System.getenv('KEYSTORE_PATH')) signingConfig signingConfigs.release
             buildConfigField 'boolean', 'ENABLE_GITHUB_UPDATE', 'true'
         }
         debug {
+            applicationIdSuffix '.dev'
+            versionNameSuffix '-test'
             buildConfigField 'boolean', 'ENABLE_GITHUB_UPDATE', 'false'
         }
     }
@@ -42,4 +43,5 @@ android {
 }
 dependencies {
     implementation 'androidx.core:core:1.13.1'
+    implementation 'androidx.work:work-runtime:2.9.1'
 }
