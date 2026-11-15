@@ -1,7 +1,7 @@
-# Proposition de fiche Google Play — Coran – Lire et Écouter
+# Proposition de fiche Google Play — Mon Coran – Lire & Écouter
 
 ## Nom
-Coran – Lire et Écouter
+Mon Coran – Lire & Écouter
 
 ## Description courte
 Lisez et écoutez les 114 sourates du Coran en français, arabe et anglais.
