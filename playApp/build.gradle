@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         // Identifiant exclusif à la fiche Google Play ; la version personnelle reste com.chk.coran.
-        applicationId 'com.sync30.coran'
+        applicationId 'com.sync30.moncoran'
         minSdk 24
         targetSdk 36
         versionCode = (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
