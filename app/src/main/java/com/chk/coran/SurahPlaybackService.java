@@ -55,7 +55,7 @@ public final class SurahPlaybackService extends Service {
     private MediaPlayer mediaPlayer;
     private MediaSession mediaSession;
     private AudioManager audioManager;
-    private boolean prepared, playing, loading, active, resumeOnFocus;
+    private boolean prepared, playing, loading, active, resumeOnFocus, userWantsPlayback = true;
     private int surah = 1, verse = 1, token = 0;
     private String language = Languages.FRENCH;
     private String status = "";
@@ -109,6 +109,7 @@ public final class SurahPlaybackService extends Service {
             surah = requested;
             language = Languages.normalize(intent.getStringExtra(EXTRA_LANGUAGE));
             verse = 1;
+            userWantsPlayback = true;
             active = true;
             loading = true;
             status = "Préparation de la sourate…";
@@ -206,9 +207,11 @@ public final class SurahPlaybackService extends Service {
                 }
                 prepared = true;
                 loading = false;
-                playing = true;
                 status = "";
-                mp.start();
+                if (userWantsPlayback) {
+                    mp.start();
+                    playing = true;
+                } else playing = false;
                 publish();
                 // Préchargement du prochain verset, sans attendre la fin de celui en cours.
                 if (index < verses.size()) prefetchNext(generation, index + 1);
@@ -255,6 +258,7 @@ public final class SurahPlaybackService extends Service {
     }
 
     private void pause() {
+        userWantsPlayback = false;
         if (mediaPlayer != null && prepared) {
             try { if (mediaPlayer.isPlaying()) mediaPlayer.pause(); }
             catch (Exception ignored) {}
@@ -265,6 +269,8 @@ public final class SurahPlaybackService extends Service {
 
     private void resume() {
         if (!active) return;
+        userWantsPlayback = true;
+        if (loading) { publish(); return; }
         if (mediaPlayer != null && prepared) {
             int focus = audioManager == null ? AudioManager.AUDIOFOCUS_REQUEST_GRANTED :
                 audioManager.requestAudioFocus(focusListener, AudioManager.STREAM_MUSIC,
@@ -283,6 +289,7 @@ public final class SurahPlaybackService extends Service {
 
     private void next() {
         if (!active || verses.isEmpty()) return;
+        userWantsPlayback = true;
         token++;
         if (verse < verses.size()) verse++;
         prepareVerse(token);
@@ -290,6 +297,7 @@ public final class SurahPlaybackService extends Service {
 
     private void previous() {
         if (!active || verses.isEmpty()) return;
+        userWantsPlayback = true;
         token++;
         if (verse > 1) verse--;
         prepareVerse(token);
@@ -309,6 +317,7 @@ public final class SurahPlaybackService extends Service {
         active = false;
         playing = false;
         loading = false;
+        userWantsPlayback = false;
         status = "";
         releaseMedia();
         verses.clear();
