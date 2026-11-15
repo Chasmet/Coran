@@ -57,10 +57,10 @@ jobs:
           path: playApp/build/outputs/apk/debug/playApp-debug.apk
           if-no-files-found: error
       - name: Construire AAB signé Google Play
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature/play-sync30-coran-20261115'
+        if: github.ref == 'refs/heads/main'
         run: python3 scripts/assemble_signed_play.py
       - name: Vérifier le certificat et l'intégrité de l'AAB
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature/play-sync30-coran-20261115'
+        if: github.ref == 'refs/heads/main'
         run: |
           aab=playApp/build/outputs/bundle/release/playApp-release.aab
           test -s "$aab"
@@ -71,7 +71,7 @@ jobs:
           sha256sum "$aab" > coran-play-sha256.txt
           cat coran-play-sha256.txt
       - name: Publier l'AAB comme artefact privé de workflow
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature/play-sync30-coran-20261115'
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: coran-play-signe-${{ github.run_number }}
