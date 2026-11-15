@@ -63,3 +63,17 @@ SkillMajAuto est une méthode intégrée au code de Coran, et non une applicatio
 * Le keystore doit rester sauvegardé hors du dépôt, réutilisé à l'identique pour toutes les versions de Coran.
 
 Note : les anciens APK debug diffusés sous `com.chk.coran` ne peuvent pas être remplacés par une Release avec une signature différente. Une installation initiale officielle avec la clé persistante est nécessaire.
+
+## Écoute de sourates complètes (version 1.0.10 et ultérieures)
+
+Le nouveau deuxième onglet **🎧 Écouter** est accessible depuis la liste des sourates et dispose des mêmes 3 langues que l'écran de lecture : français (Youssouf Leclerc), anglais (Ibrahim Walk), arabe (Mishary Alafasy).
+
+- Appuyer sur **▶** pour démarrer une sourate entière depuis le début : les versets MP3 sont enchaînés dans l'ordre.
+- Appuyer sur **↓** pour télécharger *tous les versets* de la sourate dans la langue sélectionnée. Une confirmation « Téléchargé · hors connexion » apparaît à la fin.
+- Même téléphone verrouillé : le lecteur Android `SurahPlaybackService` utilise un service de premier plan `mediaPlayback`, une `MediaSession`, une notification Android (pause, reprise, précédent, suivant, arrêt), un verrouillage CPU limité et la gestion des interruptions par appel/écouteurs.
+- Le téléchargement est confié à WorkManager + notification en `dataSync` et peut se poursuivre si l'interface est fermée ; il est relançable après un échec réseau.
+- Les fichiers MP3 sont enregistrés **localement par langue et numéro de verset**, réutilisant le cache existant : aucune duplication de la base de sourates, aucune suppression de favoris. L'audio nécessite Internet au premier téléchargement, puis fonctionne sans connexion.
+- L'écoute en cours est affichée en bas du nouvel écran. La fermeture de l'écran ne coupe pas la lecture. L'arrêt explicite sur **■** libère le service.
+- Sur Android 13+, l'autorisation de notification est demandée pour les commandes visibles. Sur Android 14, les types de service `mediaPlayback` et `dataSync` sont déclarés dans le manifeste.
+
+Les APK de test `com.chk.coran.dev` restent séparés de l'application stable et ne doivent pas être présentés comme des APK à signature pérenne. La publication de la Release de mise à jour nécessite toujours les 4 secrets de signature GitHub `CORAN_KEYSTORE_*` existants.

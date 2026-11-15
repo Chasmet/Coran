@@ -18,6 +18,8 @@ import java.nio.charset.StandardCharsets;
  */
 public final class AudioRepository {
     private AudioRepository() {}
+    private static final java.util.concurrent.ConcurrentHashMap<String, Object> FILE_LOCKS =
+        new java.util.concurrent.ConcurrentHashMap<>();
 
     public static File audioFile(Context context, String language, int global) {
         File folder = new File(context.getFilesDir(), "audio/" + Languages.normalize(language));
@@ -29,6 +31,8 @@ public final class AudioRepository {
         throws Exception {
         String language = Languages.normalize(lang);
         File destination = audioFile(context, language, global);
+        Object lock = FILE_LOCKS.computeIfAbsent(destination.getAbsolutePath(), k -> new Object());
+        synchronized (lock) {
         if (destination.isFile() && destination.length() >= 512) return destination;
         // Compatibilité avec les fichiers arabes téléchargés par la première version.
         if (Languages.ARABIC.equals(language)) {
@@ -61,6 +65,7 @@ public final class AudioRepository {
         } finally {
             connection.disconnect();
             if (tmp.exists()) tmp.delete();
+        }
         }
     }
 

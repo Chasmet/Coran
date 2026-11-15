@@ -44,6 +44,10 @@ public class MainActivity extends Activity {
             finish();
         });
         favorites.setOnClickListener(v -> startActivity(new Intent(this, BookmarksActivity.class)));
+        findViewById(R.id.listenAllTab).setOnClickListener(v -> {
+            Languages.select(this, language);
+            startActivity(new Intent(this, AudioLibraryActivity.class));
+        });
         bindTab(R.id.tabFrench, Languages.FRENCH);
         bindTab(R.id.tabEnglish, Languages.ENGLISH);
         bindTab(R.id.tabArabic, Languages.ARABIC);
@@ -98,6 +102,10 @@ public class MainActivity extends Activity {
             "114 sourates · lecture et récitation", "114 surahs · reading and audio",
             "١١٤ سورة · قراءة واستماع"));
         favorites.setText(Languages.text(language, "★ Favoris", "★ Bookmarks", "★ المفضلة"));
+        ((TextView) findViewById(R.id.readingModeTab)).setText(Languages.text(language,
+            "📖 Lire", "📖 Read", "📖 قراءة"));
+        ((TextView) findViewById(R.id.listenAllTab)).setText(Languages.text(language,
+            "🎧 Écouter", "🎧 Listen", "🎧 استماع"));
         search.setHint(Languages.text(language, "Rechercher une sourate…", "Search for a surah…", "بحث عن سورة…"));
         filter(search.getText().toString());
         updateResume();

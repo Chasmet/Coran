@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:minHeight="77dp" android:padding="10dp"
+    android:gravity="center_vertical" android:orientation="horizontal"
+    android:background="@drawable/card_bg">
+    <TextView android:id="@+id/audioSurahNumber" android:layout_width="37dp"
+        android:layout_height="wrap_content" android:gravity="center"
+        android:text="1" android:textSize="17sp" android:textStyle="bold"
+        android:textColor="@color/primary"/>
+    <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView android:id="@+id/audioSurahName" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Al-Fatiha"
+            android:textStyle="bold" android:textSize="17sp" android:textColor="@color/text"/>
+        <TextView android:id="@+id/audioSurahInfo" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Écouter en entier"
+            android:textColor="@color/muted" android:textSize="11sp" android:paddingTop="4dp"/>
+    </LinearLayout>
+    <TextView android:id="@+id/audioSurahPlay"
+        android:layout_width="47dp" android:layout_height="45dp"
+        android:gravity="center" android:background="@drawable/tab_selected"
+        android:text="▶" android:textSize="19sp" android:textColor="#FFFFFF"
+        android:contentDescription="Écouter la sourate entière"/>
+    <TextView android:id="@+id/audioSurahDownload" android:layout_width="47dp"
+        android:layout_height="45dp" android:layout_marginLeft="6dp"
+        android:gravity="center" android:background="@drawable/tab_normal"
+        android:text="↓" android:textSize="25sp" android:textColor="@color/text"
+        android:contentDescription="Télécharger l'audio complet"/>
+</LinearLayout>

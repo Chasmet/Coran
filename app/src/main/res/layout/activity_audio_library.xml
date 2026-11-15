@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="13dp" android:background="@color/background">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:id="@+id/audioBack" android:layout_width="53dp"
+            android:layout_height="49dp" android:text="‹" android:textSize="29sp"
+            android:gravity="center" android:background="@drawable/tab_normal"
+            android:textColor="@color/text" android:contentDescription="Retour à la lecture"/>
+        <TextView android:id="@+id/fullAudioHeading" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="Écouter les sourates" android:textSize="23sp" android:textStyle="bold"
+            android:textColor="@color/text" android:paddingLeft="10dp"/>
+        <TextView android:id="@+id/audioSettings" android:layout_width="53dp"
+            android:layout_height="49dp" android:gravity="center"
+            android:text="⚙" android:textSize="24sp" android:background="@drawable/tab_normal"
+            android:textColor="@color/text" android:contentDescription="Réglages"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" android:padding="14dp"
+        android:orientation="vertical" android:background="@drawable/hero_bg">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center" android:text="🎧  القرآن الكريم"
+            android:textSize="23sp" android:textColor="#FFF2D2"/>
+        <TextView android:id="@+id/audioReaderName"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center" android:text="Youssouf Leclerc"
+            android:textColor="#E9D3A6" android:textSize="15sp" android:paddingTop="5dp"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="9dp" android:orientation="horizontal">
+        <TextView android:id="@+id/audioFrench" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="49dp"
+            android:text="🇫🇷 FR" android:gravity="center" android:textStyle="bold"
+            android:background="@drawable/tab_normal" android:textColor="@color/text"/>
+        <TextView android:id="@+id/audioEnglish" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="49dp" android:layout_marginLeft="6dp"
+            android:text="🇬🇧 EN" android:gravity="center" android:textStyle="bold"
+            android:background="@drawable/tab_normal" android:textColor="@color/text"/>
+        <TextView android:id="@+id/audioArabic" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="49dp" android:layout_marginLeft="6dp"
+            android:text="🇸🇦 عربي" android:gravity="center" android:textStyle="bold"
+            android:background="@drawable/tab_normal" android:textColor="@color/text"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" android:orientation="horizontal">
+        <TextView android:id="@+id/audioReadingTab" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="50dp"
+            android:gravity="center" android:text="📖 Lire" android:textSize="17sp"
+            android:background="@drawable/tab_normal" android:textColor="@color/text"/>
+        <TextView android:id="@+id/audioListeningTab" android:layout_width="0dp"
+            android:layout_weight="1" android:layout_height="50dp" android:layout_marginLeft="8dp"
+            android:gravity="center" android:text="🎧 Écouter"
+            android:textSize="17sp" android:textStyle="bold"
+            android:background="@drawable/tab_selected" android:textColor="#FFFFFF"/>
+    </LinearLayout>
+    <EditText android:id="@+id/audioSearch" android:layout_width="match_parent"
+        android:layout_height="51dp" android:layout_marginTop="11dp"
+        android:inputType="text" android:singleLine="true"
+        android:hint="Rechercher une sourate" android:padding="12dp"
+        android:background="@drawable/tab_normal" android:textColor="@color/text"
+        android:textColorHint="@color/muted"/>
+    <TextView android:id="@+id/audioListStatus" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="114 sourates"
+        android:textColor="@color/muted" android:padding="8dp" android:textSize="13sp"/>
+    <ListView android:id="@+id/audioSurahList" android:layout_width="match_parent"
+        android:layout_height="0dp" android:layout_weight="1"
+        android:dividerHeight="8dp" android:clipToPadding="false"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="10dp"
+        android:background="@drawable/card_bg">
+        <TextView android:id="@+id/fullNowPlaying" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Aucune sourate en lecture"
+            android:textSize="15sp" android:textStyle="bold" android:textColor="@color/text"/>
+        <TextView android:id="@+id/audioBackgroundHint" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:textSize="11sp"
+            android:text="Écoute écran verrouillé · contrôles dans les notifications"
+            android:textColor="@color/muted" android:paddingTop="3dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center"
+            android:layout_marginTop="7dp">
+            <TextView android:id="@+id/fullPrevious" android:layout_width="0dp"
+                android:layout_weight="1" android:layout_height="45dp" android:gravity="center"
+                android:text="|◀" android:textColor="@color/text" android:textSize="21sp"
+                android:background="@drawable/tab_normal" android:contentDescription="Verset précédent"/>
+            <TextView android:id="@+id/fullPlayPause" android:layout_width="0dp"
+                android:layout_weight="1.5" android:layout_height="45dp" android:gravity="center"
+                android:text="▶" android:textColor="#FFFFFF" android:textSize="23sp"
+                android:background="@drawable/tab_selected" android:layout_marginLeft="6dp"
+                android:contentDescription="Lecture ou pause"/>
+            <TextView android:id="@+id/fullNext" android:layout_width="0dp"
+                android:layout_weight="1" android:layout_height="45dp" android:gravity="center"
+                android:text="▶|" android:textColor="@color/text" android:textSize="21sp"
+                android:background="@drawable/tab_normal" android:layout_marginLeft="6dp"
+                android:contentDescription="Verset suivant"/>
+            <TextView android:id="@+id/fullStop" android:layout_width="0dp"
+                android:layout_weight="1" android:layout_height="45dp" android:gravity="center"
+                android:text="■" android:textColor="@color/text" android:textSize="20sp"
+                android:background="@drawable/tab_normal" android:layout_marginLeft="6dp"
+                android:contentDescription="Arrêter l'écoute"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
