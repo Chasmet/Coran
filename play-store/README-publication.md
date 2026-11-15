@@ -59,3 +59,12 @@ Branche principale distribuée : `main`.
 - **À FAIRE** : téléverser l'icône, la bannière et les captures conformes, enregistrer la fiche, contrôler la signature AAB, tester en interne, puis seulement envisager la soumission.
 - **STATUT** : la PR `#1` reste en **brouillon** ; la branche `main`, le package personnel et son canal de mises à jour ne sont pas modifiés par cette préparation. Google Play **non publié** ; aucune revue Google en cours n'a été constatée.
 - **SÉCURITÉ** : aucun certificat privé, jeton ou mot de passe ajouté aux notes ou au dépôt.
+
+## Suivi complémentaire du 15 novembre 2026 — 19 h 45
+
+- **FAIT ET VÉRIFIÉ** : dans Play Console pour « Mon Coran – Lire & Écouter », le formulaire **Ads / Publicités** a été enregistré sur **« No, my app does not contain ads »**. Vérification après rechargement : radio « No » encore sélectionné. Retour au tableau de bord : **« 1 of 11 complete »**, rubrique Ads cochée.
+- **NON VALIDÉ** : formulaire **Sign in details** : option « No » (aucune partie restreinte, pas de compte ni de paiement) sélectionnée à l'écran mais non persistante au rechargement ; tableau de bord resté à 1/11. Ne pas annoncer cette tâche terminée.
+- **BLOQUÉ** : navigation vers le formulaire « Government apps » sans résultat confirmé ; navigateur Android partagé avec d'autres onglets et actions concurrents. Ne pas rejouer de clic incertain sans inspection de la page.
+- **FAIT, NON DÉPLOYÉ** : politique `coran-confidentialite.html` créée dans `Chasmet/sync30`, commit `12a46035faeb9099d4766e596a2d29e7808d7e62`. L'URL `https://sync30.onrender.com/coran-confidentialite.html` a répondu HTTP 404 au contrôle. L'accès Render demande explicitement une sélection d'espace de travail confirmée par le propriétaire ; aucun service Render n'a été modifié. Ne PAS inscrire une URL en HTTP 404 dans Play Console.
+- **TESTÉ** : Google Play CI n° 16, commit `2d83e528af96ac11a506454b3a92c152c49b1d21`, terminé success avec APK de test. Pas d'AAB signé release ; signature réservée à main.
+- **RESTE** : confirmer l'espace Render, rendre la politique accessible publiquement en HTTPS, finaliser 10 tâches Play Console, vérifier licences de contenus audio/traductions, obtenir et valider l'AAB release signé, tester la piste interne, soumettre puis vérifier le statut exact. Branche `main` et package personnel `com.chk.coran` préservés.
