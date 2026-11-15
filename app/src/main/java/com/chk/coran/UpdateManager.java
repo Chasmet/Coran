@@ -38,6 +38,8 @@ public final class UpdateManager {
         new Thread(() -> {
             try {
                 SkillMajAuto.Release release = new SkillMajAuto(activity).latest();
+                PreferenceManager.getDefaultSharedPreferences(activity).edit()
+                    .putLong("lastUpdateCheck", System.currentTimeMillis()).apply();
                 if (release == null) {
                     send(status, "Votre version " + BuildConfig.VERSION_NAME + " est à jour.");
                     return;
@@ -99,7 +101,9 @@ public final class UpdateManager {
     }
 
     private static void poll(Activity activity, Status status, long id) {
-        if (activity.isFinishing() || activity.isDestroyed()) return;
+        if (activity.isFinishing() || activity.isDestroyed()
+            || PreferenceManager.getDefaultSharedPreferences(activity).getLong("updateDownloadId", -1) != id)
+            return;
         DownloadManager dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
         if (dm == null) return;
         DownloadManager.Query query = new DownloadManager.Query().setFilterById(id);
@@ -111,7 +115,7 @@ public final class UpdateManager {
             }
             int state = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
             if (state == DownloadManager.STATUS_SUCCESSFUL) {
-                validateAndInstall(activity, status);
+                validateAndInstall(activity, status, id);
             } else if (state == DownloadManager.STATUS_FAILED) {
                 clear(activity);
                 send(status, "Échec du téléchargement. Réessayez depuis les réglages.");
@@ -127,7 +131,7 @@ public final class UpdateManager {
         } catch (Exception ex) { send(status, "Erreur de téléchargement : " + ex.getMessage()); }
     }
 
-    private static void validateAndInstall(Activity activity, Status status) {
+    private static void validateAndInstall(Activity activity, Status status, long id) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(activity);
         String name = pref.getString("updateName", "");
         String expected = pref.getString("updateSha", "");
@@ -145,7 +149,8 @@ public final class UpdateManager {
                 if (!expected.equals(sha256(file))) throw new SecurityException("Empreinte SHA256 différente");
                 checkSignature(activity, file, version);
                 MAIN.post(() -> {
-                    if (activity.isFinishing() || activity.isDestroyed()) return;
+                    if (activity.isFinishing() || activity.isDestroyed()
+                        || pref.getLong("updateDownloadId", -1) != id) return;
                     if (Build.VERSION.SDK_INT >= 26 && !activity.getPackageManager().canRequestPackageInstalls()) {
                         send(status, "Autorisez l'installation depuis cette application puis revenez aux réglages.");
                         Intent settings = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
@@ -165,8 +170,11 @@ public final class UpdateManager {
                     } catch (Exception ex) { send(status, "Installation impossible : " + ex.getMessage()); }
                 });
             } catch (Exception ex) {
-                clear(activity);
-                send(status, "Mise à jour refusée : " + ex.getMessage());
+                MAIN.post(() -> {
+                    if (pref.getLong("updateDownloadId", -1) != id) return;
+                    clear(activity);
+                    send(status, "Mise à jour refusée : " + ex.getMessage());
+                });
             }
         }, "coran-apk-verify").start();
     }

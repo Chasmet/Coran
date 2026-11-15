@@ -50,8 +50,6 @@ public final class SkillMajAuto {
     public Release latest() throws Exception {
         if (BuildConfig.DEBUG || !BuildConfig.ENABLE_GITHUB_UPDATE) return null;
         JSONObject doc = new JSONObject(QuranRepository.downloadText(LATEST));
-        PreferenceManager.getDefaultSharedPreferences(app).edit()
-            .putLong("lastUpdateCheck", System.currentTimeMillis()).apply();
         if (doc.optBoolean("draft") || doc.optBoolean("prerelease")) return null;
         Matcher ver = VERSION.matcher(doc.optString("tag_name", ""));
         if (!ver.matches()) throw new SecurityException("Version GitHub non reconnue");
