@@ -27,7 +27,7 @@ Branche principale distribuée : `main`.
 ## Identité Play à verrouiller avant le premier import
 
 - Nom choisi et confirmé par capture Play Console : Mon Coran – Lire & Écouter
-- Package saisi dans Play Console : `com.sync30.moncoran`, **vérification de disponibilité / création effective encore à confirmer**
+- La fiche **Mon Coran – Lire & Écouter** existe dans Play Console (tableau de bord et fiche française en brouillon vérifiés le 15/11/2026). Le module Play utilise `com.sync30.moncoran` ; vérifier que l'identifiant est accepté à l'import du premier AAB.
 - App : oui ; Free : oui ; Billing : non ; ads : non
 - API cible : 36 ; Android min 24 pour la version Play (à confirmer contre l'artefact)
 - Catégorie suggérée : Livres et références
@@ -48,10 +48,14 @@ Branche principale distribuée : `main`.
 9. AAB uploadé, release soumise, statut « en cours d'examen », puis « Production Active » séparément confirmés.
 10. Vérifier installation depuis Play, données et mises à jour.
 
-## État au 15 novembre 2026
+## État vérifié au 15 novembre 2026 (18 h, France)
 
-- FAIT : audit du dépôt et création d'une branche de préparation séparée ; configuration de la variante Play.
-- À TESTER : résultat GitHub Actions, AAB signé, certificat, fonctionnement sur appareil.
-- NON FAIT : création de la fiche Play, import AAB, déclarations, publication.
-- RISQUE : droits des contenus tiers à créditer ; vérifier les conditions en vigueur.
-- IMPORTANT : aucune clé privée ni mot de passe dans ce dépôt.
+- **FAIT** : application « Mon Coran – Lire & Écouter » retrouvée sur la console Google Play. La fiche principale en français est en **brouillon** et comporte déjà le nom, la description courte et la description longue (respectivement 26/30, 73/80 et 1237/4000 caractères dans la console).
+- **FAIT** : code Play séparé du canal personnel, avec package `com.sync30.moncoran`, API cible 36, 0 publicité, 0 achat intégré et mises à jour externes désactivées.
+- **TESTÉ** : workflow de préparation GitHub Actions **exécution n° 12**, statut **success**, branche `feature/play-sync30-coran-20261115`, commit `092838fcd8afdab3affd37711e747ede504582db` ; archive APK QA `coran-play-test-12`. La compilation de contrôle de l'AAB n'est **pas** une validation de signature.
+- **FAIT (inventaire local CHK)** : `Categories/Images/application/application religieuse/application Coran/image visuel et logo/Play_Store_Prepa` contient `01_Logo_Mon_Coran_512x512.png` (512×512), `02_Banniere_Mon_Coran_1024x500.png` (1024×500) et les captures `tmp_03_Accueil.jpg`, `tmp_04_Francais.jpg`, `tmp_05_Anglais.jpg`, `tmp_06_Arabe.jpg`. La capture Accueil mesure 935×1920, soit un ratio de plus de 2:1 : vérifier les quatre captures avant import (préférer 1080×1920 sans déformer l'interface).
+- **BLOQUÉ / À FAIRE** : l'ancienne tentative de signature distante sur la branche a renvoyé HTTP 403 (exécution n° 11) ; le workflow a été corrigé pour ne signer qu'à partir de `main`. **Aucun AAB signé Play n'a été vérifié ou importé.**
+- **À FAIRE** : valider les droits des traductions et récitations, publier la politique de confidentialité propre à l'application sur une URL HTTPS, vérifier le contenu du formulaire Data safety et finaliser les déclarations de Console.
+- **À FAIRE** : téléverser l'icône, la bannière et les captures conformes, enregistrer la fiche, contrôler la signature AAB, tester en interne, puis seulement envisager la soumission.
+- **STATUT** : la PR `#1` reste en **brouillon** ; la branche `main`, le package personnel et son canal de mises à jour ne sont pas modifiés par cette préparation. Google Play **non publié** ; aucune revue Google en cours n'a été constatée.
+- **SÉCURITÉ** : aucun certificat privé, jeton ou mot de passe ajouté aux notes ou au dépôt.
