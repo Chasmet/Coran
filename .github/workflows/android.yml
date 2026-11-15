@@ -62,18 +62,21 @@ jobs:
           KEY_PASSWORD: ${{ secrets.CORAN_KEY_PASSWORD }}
         run: |
           if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
-            echo "Signature non configurée : aucun APK de mise à jour publié."
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            exit 0
+            echo "::error::Signature permanente absente : configurez les quatre secrets CORAN_KEYSTORE_*. Refus de déclarer une compilation de production réussie sans Release signée."
+            exit 1
           fi
           printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/coran-release.jks"
           export KEYSTORE_PATH="$RUNNER_TEMP/coran-release.jks"
           ./gradlew --no-daemon assembleRelease
           "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
+          CERT=$("$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs app/build/outputs/apk/release/app-release.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1)
+          test "$CERT" = "8a0d3c5bbb0a62b04b2a098c7b73dc1976358c87820ab3ebe2b5a4cf3ab35776" || { echo "::error::Certificat différent de la clé permanente Coran. Publication refusée."; exit 1; }
           "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging app/build/outputs/apk/release/app-release.apk | grep "name='com.chk.coran'"
           cp app/build/outputs/apk/release/app-release.apk coran-release.apk
           HASH=$(sha256sum coran-release.apk | awk '{print $1}')
           echo "SHA256: $HASH" > release-notes.txt
+          echo "Version: 1.0.${{ github.run_number }}" >> release-notes.txt
+          echo "Signature vérifiée, même certificat permanent. Mise à jour intégrée depuis l'application." >> release-notes.txt
           echo "ready=true" >> "$GITHUB_OUTPUT"
       - name: Publier GitHub Release — dernière version
         if: ${{ steps.signed.outputs.ready == 'true' }}
@@ -83,6 +86,13 @@ jobs:
           gh release create "v1.0.${{ github.run_number }}" ./coran-release.apk \
             --title "Coran 1.0.${{ github.run_number }}" \
             --notes-file release-notes.txt --latest
+      - name: Archiver l'APK officiel signé
+        if: ${{ steps.signed.outputs.ready == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coran-officiel-signe-${{ github.run_number }}
+          path: coran-release.apk
+          if-no-files-found: error
       - name: Effacer la copie temporaire du keystore
         if: always()
         run: rm -f "$RUNNER_TEMP/coran-release.jks"
