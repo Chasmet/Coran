@@ -43,7 +43,7 @@ jobs:
           test -f playApp/src/main/AndroidManifest.xml
           ! grep -q 'REQUEST_INSTALL_PACKAGES' playApp/src/main/AndroidManifest.xml
           ! grep -q 'SkillMajAutoReceiver' playApp/src/main/AndroidManifest.xml
-          grep -q "applicationId 'com.sync30.coran'" playApp/build.gradle
+          grep -q "applicationId 'com.sync30.moncoran'" playApp/build.gradle
           grep -q 'targetSdk 36' playApp/build.gradle
           grep -q "'ENABLE_GITHUB_UPDATE', 'false'" playApp/build.gradle
       - name: Compilation de contrôle sur branche de préparation
