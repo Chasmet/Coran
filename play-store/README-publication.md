@@ -1,4 +1,4 @@
-# Coran – Lire et Écouter | Préparation Google Play
+# Mon Coran – Lire & Écouter | Préparation Google Play
 
 **Éditeur : Sync 30 Numérique** · **Prix : 0 € définitivement** · **Publicités : non** · **Achats intégrés : non**.
 
@@ -7,8 +7,8 @@
 | Canal | Module | applicationId | Distribution |
 | --- | --- | --- | --- |
 | Personnel | `app` | `com.chk.coran` | APK signé GitHub Releases, mise à jour via SkillMajAuto |
-| Google Play | `playApp` | `com.sync30.coran` | AAB signé et mises à jour exclusivement par Google Play |
-| Test Play | `playApp` debug | `com.sync30.coran.dev` | APK QA distinct |
+| Google Play | `playApp` | `com.sync30.moncoran` | AAB signé et mises à jour exclusivement par Google Play |
+| Test Play | `playApp` debug | `com.sync30.moncoran.dev` | APK QA distinct |
 
 La version personnelle **ne doit pas être désinstallée**. Les données et favoris des deux packages sont séparés. Aucun transfert automatique des données n'est garanti.
 
@@ -26,8 +26,8 @@ Branche principale distribuée : `main`.
 
 ## Identité Play à verrouiller avant le premier import
 
-- Nom proposé : Coran – Lire et Écouter
-- Package public proposé : `com.sync30.coran`, **à vérifier dans Play Console**
+- Nom choisi et confirmé par capture Play Console : Mon Coran – Lire & Écouter
+- Package saisi dans Play Console : `com.sync30.moncoran`, **vérification de disponibilité / création effective encore à confirmer**
 - App : oui ; Free : oui ; Billing : non ; ads : non
 - API cible : 36 ; Android min 24 pour la version Play (à confirmer contre l'artefact)
 - Catégorie suggérée : Livres et références
