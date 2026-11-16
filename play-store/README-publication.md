@@ -80,3 +80,16 @@ Branche principale distribuée : `main`.
 - **CONFIDENTIALITÉ / RENDER :** fichier HTML présent sur GitHub `Chasmet/sync30` branche main ; URL publique non revalidée en HTTP 200 durant cette reprise. Ne pas renseigner une URL non vérifiée sur Play. L'API Render a révélé un espace de travail « My Workspace » mais demande une confirmation préalable de sélection avant de consulter ou modifier les services ; aucune mutation Render effectuée.
 - **SIGNATURE :** workflow de CI de préparation vérifié ; signature release strictement réservée à main. Aucun nouveau certificat ni AAB signé contrôlé, aucun envoi à Play et aucune publication.
 - **NOTES CHK :** CHK Agent Browser a retourné « Navigateur hors ligne » à la lecture des notes. La présente section GitHub conserve les observations en attendant leur synchronisation vers les notes CHK. Ne pas annoncer que les notes Android ont été actualisées.
+
+
+## État confirmé 16 novembre 2026 — Console Google Play
+
+- **FAIT — Play Console** : les 11 formalités initiales sont enregistrées. Transition vérifiée : Target audience coché à 10/11, puis sauvegarde de Data safety et disparition des formalités initiales du tableau de bord. Pistes de test déverrouillées ; ceci ne signifie pas publication.
+- **Data safety enregistrée** : App interactions (Collected + Shared), données nécessaires aux fonctionnalités, requêtes HTTPS, aucun compte, demandes de suppression via https://sync30.onrender.com/coran-confidentialite.html. Trafic réel et pratiques des tiers à vérifier.
+- **Fiche Play** : catégorie Books & Reference, contact professionnel et politique HTTPS enregistrés ; français, icône, bannière et 4 captures ; IARC et autres déclarations cochés. Produit Free, sans publicité, achat ni abonnement.
+- **Dernier contrôle CI connu** : run GitHub Actions n°18, commit 97fb83911bcfc39f7678565704e3a688c3ffd2b2, artefact coran-play-test-18 = APK QA uniquement. Ne pas confondre bundle de contrôle et AAB release signé.
+- **TEST INTERNE** : 0/3 tâches terminées au tableau de bord : tester(s), nouvelle release puis confirmation. Aucun AAB signé téléversé.
+- **SIGNATURE** : .github/workflows/google-play.yml ne signe que sur branche main avec signataire OIDC existant et vérification SHA-256. Ne pas fusionner la PR préparatoire avant validation des licences et tests. AAB release signé non produit/vérifié.
+- **LICENCES** : Al Quran Cloud autorise les textes fidèles avec attribution mais les traductions/récitations appartiennent à leurs titulaires. Vérifier droits pour publication par entreprise individuelle, même sans publicité et gratuite.
+- **PERSONNELLE** : préserver com.chk.coran et ses données ; com.sync30.moncoran (public) et com.sync30.moncoran.dev (test) restent distincts.
+- **NON FAIT** : test réel AAB signé, piste interne active, soumission en revue, publication en production.
