@@ -2,6 +2,9 @@ plugins {
     id 'com.android.application'
 }
 
+// La piste Play a déjà enregistré le versionCode 23.
+def playVersionCode = Math.max(24, (System.getenv('GITHUB_RUN_NUMBER') ?: '24').toInteger())
+
 android {
     namespace 'com.chk.coran'
     compileSdk 36
@@ -11,8 +14,10 @@ android {
         applicationId 'com.sync30.moncoran'
         minSdk 24
         targetSdk 36
-        versionCode = (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
-        versionName "1.0.${System.getenv('GITHUB_RUN_NUMBER') ?: '1'}"
+        // Google Play refuse toute réutilisation d'un versionCode déjà enregistré.
+        // Minimum 24 ; les workflows suivants augmentent automatiquement ce numéro.
+        versionCode = playVersionCode
+        versionName "1.0.${playVersionCode}"
     }
 
     // Réutilise le code et les ressources sans déplacer ni modifier l'application personnelle.
