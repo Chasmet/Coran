@@ -62,7 +62,7 @@ def main():
         with os.fdopen(os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600), "wb") as stream:
             stream.write(keystore)
         subprocess.run(
-            ["./gradlew", "--no-daemon", "assembleRelease"],
+            ["./gradlew", "--no-daemon", ":app:assembleRelease"],
             env={**os.environ, **env, "KEYSTORE_PATH": str(path)},
             check=True,
         )

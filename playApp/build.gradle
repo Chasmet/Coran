@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.chk.coran'
+    compileSdk 36
+
+    defaultConfig {
+        // Identifiant exclusif à la fiche Google Play ; la version personnelle reste com.chk.coran.
+        applicationId 'com.sync30.moncoran'
+        minSdk 24
+        targetSdk 36
+        versionCode = (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+        versionName "1.0.${System.getenv('GITHUB_RUN_NUMBER') ?: '1'}"
+    }
+
+    // Réutilise le code et les ressources sans déplacer ni modifier l'application personnelle.
+    sourceSets {
+        main {
+            java.srcDirs = ['../app/src/main/java']
+            res.srcDirs = ['../app/src/main/res']
+        }
+    }
+
+    buildFeatures { buildConfig true }
+    signingConfigs {
+        release {
+            if (System.getenv('KEYSTORE_PATH')) {
+                storeFile file(System.getenv('KEYSTORE_PATH'))
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (System.getenv('KEYSTORE_PATH')) signingConfig signingConfigs.release
+            buildConfigField 'boolean', 'ENABLE_GITHUB_UPDATE', 'false'
+        }
+        debug {
+            applicationIdSuffix '.dev'
+            versionNameSuffix '-test'
+            buildConfigField 'boolean', 'ENABLE_GITHUB_UPDATE', 'false'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core:1.13.1'
+    implementation 'androidx.work:work-runtime:2.9.1'
+}
